@@ -15,19 +15,6 @@ from gluon.contrib.appconfig import AppConfig
 myconf = AppConfig(reload=True)
 
 
-if not request.env.web2py_runtime_gae:
-    ## if NOT running on Google App Engine use SQLite or other DB
-    db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'])
-else:
-    ## connect to Google BigTable (optional 'google:datastore://namespace')
-    db = DAL('google:datastore+ndb')
-    ## store sessions and tickets there
-    session.connect(request, response, db=db)
-    ## or store session in Memcache, Redis, etc.
-    ## from gluon.contrib.memdb import MEMDB
-    ## from google.appengine.api.memcache import Client
-    ## session.connect(request, response, db = MEMDB(Client()))
-
 ## by default give a view/generic.extension to all actions from localhost
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
@@ -53,14 +40,22 @@ response.form_label_separator = myconf.take('forms.separator')
 
 from gluon.tools import Auth, Service, PluginManager
 
+## if NOT running on Google App Engine use SQLite or other DB
+db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'])
+
 auth = Auth(db)
-auth.define_tables(username=False,signature=False)
+## create all tables needed by auth if not custom tables
+auth.define_tables(username=True, signature=False)
+
 
 service = Service()
 plugins = PluginManager()
 
-## create all tables needed by auth if not custom tables
-auth.define_tables(username=False, signature=False)
+
+
+
+
+
 
 ## configure email
 mail = auth.settings.mailer
@@ -92,3 +87,26 @@ auth.settings.reset_password_requires_verification = True
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
+
+
+
+
+
+
+## comicbox table
+## privacy field (if true private, else public)
+db.define_table('comicbox', Field('id', type='id'), Field('user_id', db.auth_user), Field('private', type='boolean'), Field('date_created', type='datetime'))
+
+
+## comic table
+db.define_table('comic', Field('id', type='id'), Field('box_id', 'reference comicbox'), Field('title', type='string'),
+                Field('issue_number', type='integer'), Field('publisher', type='string'),
+                Field('description', type='text'))
+
+## writer_table
+
+db.define_table('writer', Field('id', type='id'), Field('user_id', 'reference auth_user'))
+
+## comic_writer table
+
+## artist_writer table
