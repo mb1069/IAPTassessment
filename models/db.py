@@ -47,15 +47,8 @@ auth = Auth(db)
 ## create all tables needed by auth if not custom tables
 auth.define_tables(username=True, signature=False)
 
-
 service = Service()
 plugins = PluginManager()
-
-
-
-
-
-
 
 ## configure email
 mail = auth.settings.mailer
@@ -89,24 +82,46 @@ auth.settings.reset_password_requires_verification = True
 # auth.enable_record_versioning(db)
 
 
-
-
-
-
 ## comicbox table
 ## privacy field (if true private, else public)
-db.define_table('comicbox', Field('id', type='id'), Field('user_id', db.auth_user), Field('private', type='boolean'), Field('date_created', type='datetime'))
+db.define_table('comicbox',
+                Field('user_id', db.auth_user, required=True),
+                Field('box_name', type='string', required=True),
+                Field('private', type='boolean', default=True),
+                Field('created_on', 'datetime', readable=False, writable=False, default=request.now))
 
 
 ## comic table
-db.define_table('comic', Field('id', type='id'), Field('box_id', 'reference comicbox'), Field('title', type='string'),
-                Field('issue_number', type='integer'), Field('publisher', type='string'),
+db.define_table('comicbook',
+                Field('box_id', 'reference comicbox', required=True),
+                Field('title', type='string', required=True),
+                Field('cover', type='upload', uploadfield=True, uploadseparate=True),
+                Field('issue_number', type='integer'),
+                Field('publisher', type='string'),
                 Field('description', type='text'))
 
 ## writer_table
 
-db.define_table('writer', Field('id', type='id'), Field('user_id', 'reference auth_user'))
+db.define_table('writer',
+                Field('user_id', 'reference auth_user', required=True),
+                Field('name', type='string', required=True))
 
 ## comic_writer table
 
+db.define_table('comicWriter',
+                Field('comicbook', 'reference comicbook', required=True),
+                Field('writer', 'reference writer', required=True),
+                primarykey=['comicbook','writer'])
+
+## artist_table
+
+db.define_table('artist',
+                Field('user_id', 'reference auth_user', required=True),
+                Field('name', type='string', required=True))
+
 ## artist_writer table
+
+db.define_table('comicArtist',
+                Field('comicbook', 'reference comicbook', required=True),
+                Field('artist', 'reference artist', required=True),
+                primarykey=['comicbook','artist'])
