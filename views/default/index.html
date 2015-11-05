@@ -1,2 +1,14 @@
 {{extend 'comic_layout.html'}}
-{{=big_boxes}}
+<div class="mainLeft">
+    <div class="divTitle">Largest comic-boxes</div>
+    {{for box in largest_boxes:}}
+    {{include "subviews/comicbox.html"}}
+    {{pass}}
+</div>
+
+<div class="mainRight">
+    <div class="divTitle">Most recent comic-boxes</div>
+    {{for box in recent_boxes:}}
+    {{include "subviews/comicbox.html"}}
+    {{pass}}
+</div>
