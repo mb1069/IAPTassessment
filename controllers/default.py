@@ -10,7 +10,15 @@
 
 
 def index():
-    return dict()
+    return {'big_boxes': get_5_biggest_boxes()}
+
+
+def get_5_biggest_boxes():
+    count = db.comicbox.id.count()
+    boxes = db(db.comicbox.id==db.comicbook.box_id).select(db.comicbox.box_name, count, groupby=db.comicbox.id)
+    return boxes
+
+
 
 def user():
     """
