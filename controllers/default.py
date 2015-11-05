@@ -12,6 +12,7 @@
 def index():
     return dict()
 
+
 def user():
     """
     exposes:
