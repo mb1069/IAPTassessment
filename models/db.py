@@ -93,7 +93,7 @@ db.define_table('comicbox',
 
 ## comic table
 db.define_table('comicbook',
-                Field('box_id', 'reference comicbox', required=True),
+                Field('box_id', db.comicbox, required=True),
                 Field('title', type='string', required=True),
                 Field('cover', type='upload', uploadfield=True, uploadseparate=True),
                 Field('issue_number', type='integer'),
