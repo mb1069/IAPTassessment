@@ -1,0 +1,15 @@
+<div class="comicbox">
+
+
+    <div class="title">
+        {{=box[0].comicbox.box_name}} {{=box[0].comicbox.created_on}}
+    </div>
+
+    {{for comic in box:}}
+    <div class="attribute">
+        {{=comic.comicbook.title}}
+        </div>
+    {{pass}}
+
+
+</div>

@@ -9,8 +9,55 @@
 #########################################################################
 
 
+# -*- coding: utf-8 -*-
+# this file is released under public domain and you can use without limitations
+
+########################################################################
+# This is a sample controller
+# - index is the default action of any application
+# - user is required for authentication and authorization
+# - download is for downloading files uploaded in the db (does streaming)
+########################################################################
+
+
 def index():
-    return dict()
+    #Comment
+    largest_boxes = get_biggest_boxes(5)
+    recent_boxes = get_recent_boxes(5)
+
+    return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes}
+
+
+def get_biggest_boxes(num_boxes):
+    count = db.comicbox.id.count()
+    boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id,
+                                                             count,
+                                                             orderby=~count,
+                                                             groupby=db.comicbox.box_name,
+                                                             limitby=(0, num_boxes))
+
+    boxed_comics = []
+    for row in boxes:
+        boxed_comics.append(db((db.comicbook.box_id == row.comicbox.id) & (row.comicbox.id == db.comicbox.id)).select(
+            db.comicbook.title,
+            db.comicbook.cover,
+            db.comicbox.box_name, db.comicbox.created_on))
+    return boxed_comics
+
+
+def get_recent_boxes(num_boxes):
+    boxes = db().select(db.comicbox.id,
+                        db.comicbox.box_name,
+                        db.comicbox.created_on,
+                        orderby=~db.comicbox.created_on,
+                        limitby=(0, num_boxes))
+    boxed_comics = []
+    for row in boxes:
+        boxed_comics.append(
+            db((db.comicbook.box_id == row.id) & (row.id == db.comicbox.id)).select(db.comicbook.title,
+                                                                                    db.comicbook.cover,
+                                                                                    db.comicbox.box_name, db.comicbox.created_on))
+    return boxed_comics
 
 
 def user():
