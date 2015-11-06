@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+
 <!--[if (gt IE 9)|!(IE)]><!-->
 <html class="no-js" lang="{{=T.accepted_language or 'en'}}"> <!--<![endif]-->
+
 <head>
     <meta charset="utf-8">
     <!-- www.phpied.com/conditional-comments-block-downloads/ -->
@@ -93,6 +95,7 @@ middle_column = {0: mc0, 1: mc1, 2: mc2}[
         {{end}}
     </div>
 
+
 {{if right_sidebar_enabled:}}
     <div class="col-md-3">
     {{block right_sidebar}}
@@ -124,8 +127,7 @@ middle_column = {0: mc0, 1: mc1, 2: mc2}[
 <!-- Analytics ==================================== -->
 <script src="{{=URL('static','js/analytics.min.js')}}"></script>
 <script type="text/javascript">
-    analytics.initialize({
-        'Google Analytics': {trackingId: '{{=response.google_analytics_id}}'}
+    analytics.initialize({ 'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'}
     });
 </script>
 {{pass}}
