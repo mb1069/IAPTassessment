@@ -39,9 +39,9 @@ def get_biggest_boxes(num_boxes):
     boxed_comics = []
     for row in boxes:
         boxed_comics.append(db((db.comicbook.box_id == row.comicbox.id) & (row.comicbox.id == db.comicbox.id)).select(
-            db.comicbook.title,
-            db.comicbook.cover,
-            db.comicbox.box_name, db.comicbox.created_on))
+            'title',
+            'cover',
+            'box_name', 'created_on'))
     return boxed_comics
 
 

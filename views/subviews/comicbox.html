@@ -1,14 +1,21 @@
 <div class="comicbox">
-
-
-    <div class="title">
-        {{=box[0].comicbox.box_name}}
+    <div class="comicbox-title">
+        {{=row.box_name}}
     </div>
-    <div class="attribute">
-        {{=box[0].comicbox.created_on}}
+    <div class="box-attribute">
+        {{=row.created_on}}
     </div>
-    {{for comic in box:}}
-        {{=BEAUTIFY(comic)}}
-    {{pass}}
+    <div class="comics-area">
+        {{if len(user_boxes_data)>0:}}
+            {{for sub_row in user_boxes_data:}}
+                {{if sub_row.comicbook.box_id==row.id:}}
+                    <div class="comic-icon">
+                        {{=sub_row.comicbook.title}}
+                            <img height="40" width="30" src="{{=URL('download', args=sub_row.comicbook.cover)}}"/>
+                    </div>
+                {{pass}}
+            {{pass}}
+        {{pass}}
+    </div>
 </div>
 
