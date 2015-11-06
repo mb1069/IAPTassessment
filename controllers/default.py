@@ -21,27 +21,32 @@
 
 
 def index():
-
-    largest_boxes = get_biggest_boxes(5)
+    largest_boxes = get_largest_boxes(5)
     recent_boxes = get_recent_boxes(5)
+    box_names = db((db.comicbook.box_id == db.comicbox.id)).select(
+        db.comicbox.id, db.comicbox.box_name, db.comicbox.created_on)
+    print largest_boxes
+    return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes, 'box_names': box_names}
 
-    return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes}
 
-
-def get_biggest_boxes(num_boxes):
+def get_largest_boxes(num_boxes):
     count = db.comicbox.id.count()
-    boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id,
-                                                             count,
+    boxes = db(db.comicbox.id == db.comicbook.box_id)._select('box_id',
                                                              orderby=~count,
                                                              groupby=db.comicbox.box_name,
                                                              limitby=(0, num_boxes))
 
     boxed_comics = []
     for row in boxes:
-        boxed_comics.append(db((db.comicbook.box_id == row.comicbox.id) & (row.comicbox.id == db.comicbox.id)).select(
+        boxed_comics.append(db((db.comicbook.box_id.belongs(boxes)) & (row.comicbox.id == db.comicbox.id)).select(
+            'box_name',
+            'box_id',
             'title',
             'cover',
-            'box_name', 'created_on'))
+            'created_on',
+            'issue_number',
+            'publisher',
+            'description'))
     return boxed_comics
 
 
@@ -54,9 +59,15 @@ def get_recent_boxes(num_boxes):
     boxed_comics = []
     for row in boxes:
         boxed_comics.append(
-            db((db.comicbook.box_id == row.id) & (row.id == db.comicbox.id)).select(db.comicbook.title,
-                                                                                    db.comicbook.cover,
-                                                                                    db.comicbox.box_name, db.comicbox.created_on))
+            db((db.comicbook.box_id == row.id) & (row.id == db.comicbox.id)).select(
+                'box_name',
+                'box_id',
+                'title',
+                'cover',
+                'created_on',
+                'issue_number',
+                'publisher',
+                'description'))
     return boxed_comics
 
 

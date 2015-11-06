@@ -22,7 +22,7 @@
     text-align: center;
     width: 100%;
     height:2em;
-    font-size: 2em;
+    font-size: 1em;
     float:left;
     clear:both;
     overflow:hidden;
@@ -34,9 +34,20 @@
     height: 16em;
     float:left;
     margin: 1em;
+    overflow:hidden;
 }
 
 .box-attribute {
     float:left;
     clear:both;
+}
+
+.comic-icon {
+    float:left;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+}
+
+.comic-icon:hover{
+    opacity: 1;
 }
