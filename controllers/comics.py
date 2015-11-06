@@ -9,9 +9,10 @@ def mycomics():
 
 
 def myboxes():
-    user_boxes = db(auth.user_id == db.comicbox.user_id).select('comicbox.id', 'comicbox.box_name')
-
-    return {'user_boxes': user_boxes}
+    user_box_data = db((auth.user_id == db.comicbox.user_id) & (db.comicbook.box_id == db.comicbox.id)).select()
+    user_box_names = db((auth.user_id == db.comicbox.user_id) & (db.comicbook.box_id == db.comicbox.id)).select(
+        db.comicbox.id, db.comicbox.box_name, db.comicbox.created_on, groupby='box_name')
+    return {'user_boxes_data': user_box_data, 'user_box_names': user_box_names}
 
 
 def download():

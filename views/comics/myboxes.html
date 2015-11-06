@@ -1,7 +1,6 @@
 {{extend 'comic_layout.html'}}
-        {{=user_boxes}}
-{{for row in user_boxes:}}
-
-
+        {{=user_boxes_data}}
+{{for row in user_box_names:}}
+    {{include 'subviews/comicbox.html'}}
 {{pass}}
 
