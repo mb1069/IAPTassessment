@@ -1,0 +1,7 @@
+{{extend 'comic_layout.html'}}
+        {{=user_comics}}
+{{for row in user_comics:}}
+
+     <!--   <img src="{{#=URL('download', args=row.cover)}}"/> -->
+{{pass}}
+

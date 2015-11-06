@@ -1,0 +1,28 @@
+
+
+.mainLeft {
+    float:left;
+    width:49%;
+    overflow:hidden;
+}
+.mainRight {
+    float:right;
+    width:49%;
+    overflow:scroll;
+}
+
+.divTitle {
+    text-align:center;
+    font-size: 2em;
+    border-bottom-style:groove;
+}
+
+.title {
+    float:left;
+    clear:both;
+}
+
+.attribute{
+    float:left;
+    clear:both;
+}
