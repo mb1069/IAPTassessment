@@ -11,17 +11,20 @@ def mycomics():
 
 
 def myboxes():
-    user_box_data = db((auth.user_id == db.comicbox.user_id) & (db.comicbook.box_id == db.comicbox.id)).select('box_name',
-                                                                                                               'box_id',
-                                                                                                               'title',
-                                                                                                               'cover',
-                                                                                                               'created_on',
-                                                                                                               'issue_number',
-                                                                                                               'publisher',
-                                                                                                               'description')
-    user_box_names = db((auth.user_id == db.comicbox.user_id) & (db.comicbook.box_id == db.comicbox.id)).select(
-        db.comicbox.id, db.comicbox.box_name, db.comicbox.created_on, groupby='box_name')
-    return {'user_boxes_data': user_box_data, 'user_box_names': user_box_names}
+    user_boxes = db(auth.user_id == db.comicbox.user_id).select(
+        db.comicbox.id,
+        db.comicbox.box_name,
+        db.comicbox.created_on,
+        groupby=db.comicbox.box_name)
+
+    boxes = []
+    for box in user_boxes:
+        comics = db(db.comicbook.box_id == box.id).select(db.comicbook.title,
+                                                          db.comicbook.cover, db.comicbook.description,
+                                                          db.comicbook.issue_number, db.comicbook.publisher)
+        box.count = len(comics)
+        boxes.append((box, comics))
+    return {'boxes_data': boxes}
 
 
 def download():

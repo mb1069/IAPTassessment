@@ -2,19 +2,17 @@
 <div class="mainLeft">
     <div class="divTitle">Largest comic-boxes</div>
 
-    {{if len(largest_boxes)>0:}}
-        {{for row in largest_boxes:}}
-    {{=row}}
-            {{include "subviews/comicbox.html"}}
-        {{pass}}
+    {{for box in largest_boxes:}}
+
+        {{include 'subviews/comicbox.html'}}
     {{pass}}
 </div>
 
 <div class="mainRight">
     <div class="divTitle">Most recent comic-boxes</div>
     {{if len(recent_boxes)>0:}}
-        {{for row in recent_boxes:}}
-            {{#include "subviews/comicbox.html"}}
+        {{for box in recent_boxes:}}
+            {{include "subviews/comicbox.html"}}
         {{pass}}
     {{pass}}
 </div>
