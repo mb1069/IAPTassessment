@@ -23,52 +23,53 @@
 def index():
     largest_boxes = get_largest_boxes(5)
     recent_boxes = get_recent_boxes(5)
-    box_names = db((db.comicbook.box_id == db.comicbox.id)).select(
-        db.comicbox.id, db.comicbox.box_name, db.comicbox.created_on)
-    print largest_boxes
-    return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes, 'box_names': box_names}
+    return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes}
 
 
 def get_largest_boxes(num_boxes):
     count = db.comicbox.id.count()
-    boxes = db(db.comicbox.id == db.comicbook.box_id)._select('box_id',
-                                                             orderby=~count,
-                                                             groupby=db.comicbox.box_name,
-                                                             limitby=(0, num_boxes))
+    largest_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id,
+                                                              db.comicbox.box_name,
+                                                              db.comicbox.created_on,
+                                                              count,
+                                                              orderby=~count,
+                                                              groupby=db.comicbox.id,
+                                                              limitby=(0, num_boxes))
 
-    boxed_comics = []
-    for row in boxes:
-        boxed_comics.append(db((db.comicbook.box_id.belongs(boxes)) & (row.comicbox.id == db.comicbox.id)).select(
-            'box_name',
-            'box_id',
-            'title',
-            'cover',
-            'created_on',
-            'issue_number',
-            'publisher',
-            'description'))
-    return boxed_comics
+    boxes = []
+    for box in largest_boxes:
+        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title,
+                                                          db.comicbook.cover, db.comicbook.description,
+                                                          db.comicbook.issue_number, db.comicbook.publisher)
+        boxes.append((re_assemble_box_with_count(box), comics))
+
+    return boxes
 
 
 def get_recent_boxes(num_boxes):
-    boxes = db().select(db.comicbox.id,
-                        db.comicbox.box_name,
-                        db.comicbox.created_on,
-                        orderby=~db.comicbox.created_on,
-                        limitby=(0, num_boxes))
-    boxed_comics = []
-    for row in boxes:
-        boxed_comics.append(
-            db((db.comicbook.box_id == row.id) & (row.id == db.comicbox.id)).select(
-                'box_name',
-                'box_id',
-                'title',
-                'cover',
-                'created_on',
-                'issue_number',
-                'publisher',
-                'description'))
-    return boxed_comics
+
+    count = db.comicbox.id.count()
+    recent_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id,
+                                                              db.comicbox.box_name,
+                                                              db.comicbox.created_on,
+                                                              count,
+                                                              orderby=~db.comicbox.created_on,
+                                                              groupby=db.comicbox.id,
+                                                              limitby=(0, num_boxes))
+    boxes = []
+    for box in recent_boxes:
+        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title,
+                                                          db.comicbook.cover, db.comicbook.description,
+                                                          db.comicbook.issue_number, db.comicbook.publisher)
+        boxes.append((re_assemble_box_with_count(box), comics))
+
+    return boxes
+
+
+def re_assemble_box_with_count(box):
+    re_assembled_box = box.comicbox
+    re_assembled_box.count = box._extra['COUNT(comicbox.id)']
+    return re_assembled_box
 
 
 def user():

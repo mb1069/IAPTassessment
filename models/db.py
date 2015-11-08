@@ -134,7 +134,6 @@ db.define_table('comicArtist',
 db.comicbox.truncate()
 
 db.comicbox.insert(user_id=1, box_name='Box A', private=True)
-db.comicbox.insert(user_id=1, box_name='Box A', private=True)
 db.comicbox.insert(user_id=1, box_name='Box B', private=True)
 db.comicbox.insert(user_id=1, box_name='Box C', private=True)
 db.comicbox.insert(user_id=1, box_name='Box D', private=True)

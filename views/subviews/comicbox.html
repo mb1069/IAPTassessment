@@ -1,17 +1,17 @@
 <div class="comicbox">
     <div class="comicbox-title">
-        {{=row.box_name}}  {{=row.created_on}}
+        {{=box[0].box_name}}  {{=box[0].created_on}} {{=box[0].count}}
     </div>
 
     <div class="comics-area">
-        {{if len(user_boxes_data)>0:}}
-            {{for sub_row in user_boxes_data:}}
-                {{if sub_row.box_id==row.id:}}
+        {{if len(box[1])>0:}}
+            {{for comic in box[1]:}}
                     <div class="comic-icon">
-                            <img height="130" width="100" src="{{=URL('download', args=sub_row.cover)}}"/>
+                            <img height="130" width="100" src="{{=URL('download', args=comic.cover)}}"/>
                     </div>
-                {{pass}}
             {{pass}}
+        {{else:}}
+            Empty box
         {{pass}}
     </div>
 </div>
