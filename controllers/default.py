@@ -26,41 +26,80 @@ def index():
     return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes}
 
 
+def search():
+    form = request.vars
+    search_results = None
+
+    field_results = []
+    if notempty(form['title']):
+        field_results.append(
+            db(db.comicbook.title.like('%' + form['title'] + '%')).select(db.comicbook.id).column(db.comicbook.id))
+
+    if notempty(form['publisher']):
+        field_results.append(
+            db(db.comicbook.publisher.like('%' + form['publisher'] + '%')).select(db.comicbook.id).column(
+                db.comicbook.id))
+
+    if notempty(form['writer']):
+        field_results.append(db(db.writer.name.like('%' + form['writer'] + '%') &
+                 (db.comicWriter.writer == db.writer.id) &
+                 (db.comicbook.id == db.comicWriter.comicbook)).select(db.comicbook.id).column(db.comicbook.id))
+
+    if notempty(form['artist']):
+        field_results.append(db(db.artist.name.like('%' + form['artist'] + '%') &
+                 (db.comicArtist.artist == db.artist.id) &
+                 (db.comicbook.id == db.comicArtist.comicbook)).select(db.comicbook.id).column(db.comicbook.id))
+
+    intersected_results = intersect(field_results)
+    if len(intersected_results) > 0:
+        search_results = db(db.comicbook.id.belongs(intersected_results)).select(
+                left=[db.comicWriter.on(db.comicWriter.comicbook == db.comicbook.id),
+                      db.writer.on(db.comicWriter.writer == db.writer.id),
+                      db.comicArtist.on(db.comicArtist.comicbook == db.comicbook.id),
+                      db.artist.on(db.comicArtist.artist == db.artist.id)])
+    print search_results
+
+    return {'search_results': search_results}
+
+
+def intersect(lists):
+    s = set(lists[0])
+    for l in lists:
+        s = s & set(l)
+    return list(s)
+
+
+def notempty(string):
+    return (string != '') & (string is not None)
+
+
 def get_largest_boxes(num_boxes):
     count = db.comicbox.id.count()
-    largest_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id,
-                                                              db.comicbox.box_name,
-                                                              db.comicbox.created_on,
-                                                              count,
-                                                              orderby=~count,
-                                                              groupby=db.comicbox.id,
-                                                              limitby=(0, num_boxes))
+    largest_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.box_name,
+                                                                     db.comicbox.created_on, count, orderby=~count,
+                                                                     groupby=db.comicbox.id, limitby=(0, num_boxes))
 
     boxes = []
     for box in largest_boxes:
-        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title,
-                                                          db.comicbook.cover, db.comicbook.description,
-                                                          db.comicbook.issue_number, db.comicbook.publisher)
+        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title, db.comicbook.cover,
+                                                                   db.comicbook.description, db.comicbook.issue_number,
+                                                                   db.comicbook.publisher)
         boxes.append((re_assemble_box_with_count(box), comics))
 
     return boxes
 
 
 def get_recent_boxes(num_boxes):
-
     count = db.comicbox.id.count()
-    recent_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id,
-                                                              db.comicbox.box_name,
-                                                              db.comicbox.created_on,
-                                                              count,
-                                                              orderby=~db.comicbox.created_on,
-                                                              groupby=db.comicbox.id,
-                                                              limitby=(0, num_boxes))
+    recent_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.box_name,
+                                                                    db.comicbox.created_on, count,
+                                                                    orderby=~db.comicbox.created_on,
+                                                                    groupby=db.comicbox.id, limitby=(0, num_boxes))
     boxes = []
     for box in recent_boxes:
         comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title,
-                                                          db.comicbook.cover, db.comicbook.description,
-                                                          db.comicbook.issue_number, db.comicbook.publisher)
+                                                                   db.comicbook.cover, db.comicbook.description,
+                                                                   db.comicbook.issue_number, db.comicbook.publisher)
         boxes.append((re_assemble_box_with_count(box), comics))
 
     return boxes

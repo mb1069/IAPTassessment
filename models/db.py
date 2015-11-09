@@ -101,7 +101,7 @@ db.define_table('comicbook',
                 Field('title', type='string', required=True),
                 Field('cover', type='upload', uploadfield=True, uploadseparate=True),
                 Field('issue_number', type='integer'),
-                Field('publisher', type='string'),
+                Field('publisher', type='string', default=''),
                 Field('description', type='text'))
 
 # writer_table
@@ -131,6 +131,9 @@ db.define_table('comicArtist',
                 primarykey=['comicbook', 'artist'])
 
 
+import os
+
+
 db.comicbox.truncate()
 
 db.comicbox.insert(user_id=1, box_name='Box A', private=True)
@@ -141,20 +144,25 @@ db.comicbox.insert(user_id=1, box_name='Box E', private=True)
 db.comicbox.insert(user_id=1, box_name='Box F', private=True)
 
 db.comicbook.truncate()
+cover_path = os.path.join(os.path.dirname(__file__), '../static/images/superman.jpg')
+db.comicbook.insert(box_id=1, title='Superman1', publisher='DC', cover=open(cover_path))
+db.comicbook.insert(box_id=2, title='Superman2', publisher='Marvel', cover=open(cover_path))
+db.comicbook.insert(box_id=2, title='Superman2', cover=open(cover_path))
+db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
+db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
+db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
+db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
 
-db.comicbook.insert(box_id=1, title='Superman1', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=2, title='Superman2', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=2, title='Superman2', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=3, title='Superman3', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=3, title='Superman3', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=3, title='Superman3', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open('/home/miguel/Documents/IAPT/web2py/applications/IAPTassessment/static/images/superman.jpg'))
+db.artist.insert(user_id=1, name='Artsy')
+db.comicArtist.insert(comicbook=2, artist=1)
+db.writer.insert(user_id=1, name='Writsy')
+db.comicWriter.insert(comicbook=1, writer=1)
