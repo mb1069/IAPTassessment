@@ -1,0 +1,21 @@
+{{include 'comic_layout.html'}}
+<form enctype="multipart/form-data" action="{{=URL('default', 'search')}}" method="post">
+    <label> Title
+        <input name="title"/>
+    </label>
+    <label> Writer
+        <input name="writer"/>
+    </label>
+    <label> Artist
+        <input name="artist"/>
+    </label>
+    <label> Publisher
+        <input name="publisher"/>
+    </label>
+    <input type="submit" value="Submit">
+
+</form>
+
+            {{#if search_results is not None:}}
+        {{=search_results}}
+    {{#pass}}
