@@ -65,7 +65,7 @@ def search():
 def intersect(lists):
     s = set(lists[0])
     for l in lists:
-        s = s & set(l)
+        s &= set(l)
     return list(s)
 
 
