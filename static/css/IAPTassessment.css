@@ -58,19 +58,21 @@
     height:200px;
     width:150px;
     opacity: 1;
-    transition: opacity 0.3s;
     margin: 0.5em;
     float:left;
 }
 
-.comic:hover{
-    opacity: 0.5;
-}
 
 .hovertext{
-    visibility:hidden;
+    height:100%;
+    width:100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
+
 /*background-image: url({{=URL('download', args=row.comicbook.cover, host=True)}});*/
 .comic:hover .hovertext{
     visibility: visible;
+    opacity: 1;
+    background-color: rgba(255,255,255,0.7);
 }
