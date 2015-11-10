@@ -50,8 +50,8 @@ def search():
                  (db.comicArtist.artist == db.artist.id) &
                  (db.comicbook.id == db.comicArtist.comicbook)).select(db.comicbook.id).column(db.comicbook.id))
 
-    intersected_results = intersect(field_results)
-    if len(intersected_results) > 0:
+    if len(field_results) > 0:
+        intersected_results = intersect(field_results)
         search_results = db(db.comicbook.id.belongs(intersected_results)).select(
                 left=[db.comicWriter.on(db.comicWriter.comicbook == db.comicbook.id),
                       db.writer.on(db.comicWriter.writer == db.writer.id),
