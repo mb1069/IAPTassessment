@@ -73,7 +73,7 @@ def intersect(lists):
 
 
 def notempty(string):
-    return (string != '') & (string is not None)
+    return (len(string) > 0) & (string is not None)
 
 
 def get_largest_boxes(num_boxes):
@@ -147,15 +147,16 @@ def fast_download():
     if not request.args(0).startswith("db.your_table.your_field"):
         return download()
     # remove/add headers that prevent/favors client-side caching
-    #7days
+    # 7days
     response.headers['Cache-Control'] = "max-age=604800"
     del response.headers['Pragma']
     del response.headers['Expires']
-    filename = os.path.join(request.folder,'uploads',request.args(0))
+    filename = os.path.join(request.folder, 'uploads', request.args(0))
     # send last modified date/time so client browser can enable client-side caching
-    response.headers['Last-Modified'] = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(os.path.getmtime(filename)))
+    response.headers['Last-Modified'] = time.strftime("%a, %d %b %Y %H:%M:%S +0000",
+                                                      time.localtime(os.path.getmtime(filename)))
 
-    return response.stream(open(filename,'rb'))
+    return response.stream(open(filename, 'rb'))
 
 
 def call():

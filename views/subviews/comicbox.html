@@ -7,7 +7,7 @@
         {{if len(box[1])>0:}}
             {{for comic in box[1]:}}
                     <div class="comic-icon">
-                            <img height="130" width="100" src="{{=URL('download', args=comic.cover)}}"/>
+                            <img height="130" width="100" src="{{=URL(r=request, c='default', f='fast_download',  args=comic.cover, host=True)}}"/>
                     </div>
             {{pass}}
         {{else:}}
