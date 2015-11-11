@@ -62,16 +62,31 @@
     float:left;
 }
 
+.comictitle{
+    text-align: center;
+}
+
 
 .hovertext{
+    position: relative;
     height:100%;
     width:100%;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s ease-in-out, background 0.3s ease-in-out;
+    background: rgba(255,255,255,0);
+    padding: 0.5em;
 }
 
 /*background-image: url({{=URL('download', args=row.comicbook.cover, host=True)}});*/
 .hovertext:hover{
     opacity: 1;
-    background-color: rgba(255,255,255,0.7);
+    transition: opacity 0.3s ease-in-out, background 0.3s ease-in-out;
+    background: rgba(255,255,255,0.8);
+}
+
+.comic-editing{
+    position: absolute;
+    bottom: 0;
+    float: right;
+    right: 0;
 }

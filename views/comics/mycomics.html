@@ -1,11 +1,12 @@
 {{extend 'comic_layout.html'}}
 {{if auth.is_logged_in():}}
     {{for row in user_comics:}}
-            {{include 'subviews/comic.html'}}
+            {{include 'subviews/comicbook.html'}}
 
     {{pass}}
 {{else:}}
     <div>Please login to view your comics!</div>
 {{pass}}
 {{=user_comics}}
-{{#=search_results}}
+        {{=writer_comics}}
+        {{=artist_comics}}

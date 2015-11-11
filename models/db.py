@@ -101,7 +101,7 @@ db.define_table('comicbook',
                 Field('title', type='string', required=True),
                 Field('cover', type='upload', uploadfield=True, uploadseparate=True, autodelete=True),
                 Field('issue_number', type='integer'),
-                Field('publisher', type='string', default=''),
+                Field('publisher', type='string'),
                 Field('description', type='text'))
 
 # writer_table
@@ -122,6 +122,7 @@ db.define_table('comicWriter',
 db.define_table('artist',
                 Field('user_id', 'reference auth_user', required=True),
                 Field('name', type='string', required=True))
+
 
 # artist_writer table
 
@@ -165,7 +166,16 @@ if db(db.comicbox.id > -1).count() == 0:
     db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
     db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
 
+    db.artist.truncate()
+    db.writer.truncate()
+    db.comicWriter.truncate()
+    db.comicArtist.truncate()
+
     db.artist.insert(user_id=1, name='Artsy')
+    db.artist.insert(user_id=1, name='Art')
     db.comicArtist.insert(comicbook=2, artist=1)
+    db.comicArtist.insert(comicbook=2, artist=2)
     db.writer.insert(user_id=1, name='Writsy')
+    db.writer.insert(user_id=1, name='Writ')
     db.comicWriter.insert(comicbook=1, writer=1)
+    db.comicWriter.insert(comicbook=1, writer=2)

@@ -1,0 +1,31 @@
+<div class="comic" style="background-image: url({{=URL(r=request, c='default', f='fast_download',  args=row.comicbook.cover, host=True)}});">
+    <div class="hovertext">
+        <div class="comictitle">
+            {{if (not row.comicbook.publisher) & (row.comicbook.publisher is not None):}}
+                {{=row.comicbook.publisher}}'s <br> {{=row.comicbook.title}}
+            {{else:}}
+                {{=row.comicbook.title}}
+            {{pass}}
+        </div>
+        <div class="comicwriter" style="float:left; clear:both">
+            Writers:
+            {{for writer_row in writer_comics: }}
+                {{if writer_row.comicWriter.comicbook==row.comicbook.id: }}
+                    {{=writer_row.writer.name}}
+                {{pass}}
+            {{pass}}
+        </div>
+        <div class="comicwriter" style="float:left; clear:both">
+            Artists:
+            {{for artist_row in artist_comics: }}
+                {{if artist_row.comicArtist.comicbook==row.comicbook.id: }}
+                    {{=artist_row.artist.name}}
+                {{pass}}
+            {{pass}}
+        </div>
+        <div class="comic-editing">
+            <a href="{{=URL('comics', 'comicedit.html')}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a>
+            <img src="{{=URL('static', 'images', args='delete.png')}}" height="20px" width="20px"/>
+        </div>
+    </div>
+</div>
