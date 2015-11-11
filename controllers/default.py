@@ -18,6 +18,7 @@
 # - user is required for authentication and authorization
 # - download is for downloading files uploaded in the db (does streaming)
 ########################################################################
+import os, time
 
 
 def index():
@@ -42,21 +43,23 @@ def search():
 
     if notempty(form['writer']):
         field_results.append(db(db.writer.name.like('%' + form['writer'] + '%') &
-                 (db.comicWriter.writer == db.writer.id) &
-                 (db.comicbook.id == db.comicWriter.comicbook)).select(db.comicbook.id).column(db.comicbook.id))
+                                (db.comicWriter.writer == db.writer.id) &
+                                (db.comicbook.id == db.comicWriter.comicbook)).select(db.comicbook.id).column(
+            db.comicbook.id))
 
     if notempty(form['artist']):
         field_results.append(db(db.artist.name.like('%' + form['artist'] + '%') &
-                 (db.comicArtist.artist == db.artist.id) &
-                 (db.comicbook.id == db.comicArtist.comicbook)).select(db.comicbook.id).column(db.comicbook.id))
+                                (db.comicArtist.artist == db.artist.id) &
+                                (db.comicbook.id == db.comicArtist.comicbook)).select(db.comicbook.id).column(
+            db.comicbook.id))
 
     if len(field_results) > 0:
         intersected_results = intersect(field_results)
         search_results = db(db.comicbook.id.belongs(intersected_results)).select(
-                left=[db.comicWriter.on(db.comicWriter.comicbook == db.comicbook.id),
-                      db.writer.on(db.comicWriter.writer == db.writer.id),
-                      db.comicArtist.on(db.comicArtist.comicbook == db.comicbook.id),
-                      db.artist.on(db.comicArtist.artist == db.artist.id)])
+            left=[db.comicWriter.on(db.comicWriter.comicbook == db.comicbook.id),
+                  db.writer.on(db.comicWriter.writer == db.writer.id),
+                  db.comicArtist.on(db.comicArtist.comicbook == db.comicbook.id),
+                  db.artist.on(db.comicArtist.artist == db.artist.id)])
     print search_results
 
     return {'search_results': search_results}
@@ -137,6 +140,22 @@ def download():
     http://..../[app]/default/download/[filename]
     """
     return response.download(request, db)
+
+
+def fast_download():
+    # very basic security (only allow fast_download on your_table.upload_field):
+    if not request.args(0).startswith("db.your_table.your_field"):
+        return download()
+    # remove/add headers that prevent/favors client-side caching
+    #7days
+    response.headers['Cache-Control'] = "max-age=604800"
+    del response.headers['Pragma']
+    del response.headers['Expires']
+    filename = os.path.join(request.folder,'uploads',request.args(0))
+    # send last modified date/time so client browser can enable client-side caching
+    response.headers['Last-Modified'] = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.localtime(os.path.getmtime(filename)))
+
+    return response.stream(open(filename,'rb'))
 
 
 def call():
