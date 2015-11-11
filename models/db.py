@@ -99,7 +99,7 @@ db.comicbox._before_insert.append(
 db.define_table('comicbook',
                 Field('box_id', db.comicbox, required=True),
                 Field('title', type='string', required=True),
-                Field('cover', type='upload', uploadfield=True, uploadseparate=True),
+                Field('cover', type='upload', uploadfield=True, uploadseparate=True, autodelete=True),
                 Field('issue_number', type='integer'),
                 Field('publisher', type='string', default=''),
                 Field('description', type='text'))
@@ -130,39 +130,42 @@ db.define_table('comicArtist',
                 Field('artist', 'reference artist', required=True),
                 primarykey=['comicbook', 'artist'])
 
-
 import os
 
-
 db.comicbox.truncate()
-
-db.comicbox.insert(user_id=1, box_name='Box A', private=True)
-db.comicbox.insert(user_id=1, box_name='Box B', private=True)
-db.comicbox.insert(user_id=1, box_name='Box C', private=True)
-db.comicbox.insert(user_id=1, box_name='Box D', private=True)
-db.comicbox.insert(user_id=1, box_name='Box E', private=True)
-db.comicbox.insert(user_id=1, box_name='Box F', private=True)
-
 db.comicbook.truncate()
-cover_path = os.path.join(os.path.dirname(__file__), '../static/images/superman.jpg')
-db.comicbook.insert(box_id=1, title='Superman1', publisher='DC', cover=open(cover_path))
-db.comicbook.insert(box_id=2, title='Superman2', publisher='Marvel', cover=open(cover_path))
-db.comicbook.insert(box_id=2, title='Superman2', cover=open(cover_path))
-db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
-db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
-db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+if db(db.comicbox.id > -1).count() == 0:
 
-db.artist.insert(user_id=1, name='Artsy')
-db.comicArtist.insert(comicbook=2, artist=1)
-db.writer.insert(user_id=1, name='Writsy')
-db.comicWriter.insert(comicbook=1, writer=1)
+    db.comicbox.truncate()
+    db.comicbox.insert(user_id=1, box_name='Box A', private=True)
+    db.comicbox.insert(user_id=1, box_name='Box B', private=True)
+    db.comicbox.insert(user_id=1, box_name='Box C', private=True)
+    db.comicbox.insert(user_id=1, box_name='Box D', private=True)
+    db.comicbox.insert(user_id=1, box_name='Box E', private=True)
+    db.comicbox.insert(user_id=1, box_name='Box F', private=True)
+
+    db.comicbook.truncate()
+
+    cover_path = os.path.join(os.path.dirname(__file__), '../static/images/superman.jpg')
+
+    db.comicbook.insert(box_id=1, title='Superman1', publisher='DC', cover=open(cover_path))
+    db.comicbook.insert(box_id=2, title='Superman2', publisher='Marvel', cover=open(cover_path))
+    db.comicbook.insert(box_id=2, title='Superman2', cover=open(cover_path))
+    db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
+    db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
+    db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
+    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
+    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
+
+    db.artist.insert(user_id=1, name='Artsy')
+    db.comicArtist.insert(comicbook=2, artist=1)
+    db.writer.insert(user_id=1, name='Writsy')
+    db.comicWriter.insert(comicbook=1, writer=1)
