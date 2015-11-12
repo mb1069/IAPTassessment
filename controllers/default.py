@@ -83,7 +83,7 @@ def notempty(string):
 
 def get_largest_boxes(num_boxes):
     count = db.comicbox.id.count()
-    largest_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.box_name,
+    largest_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.name,
                                                                      db.comicbox.created_on, count, orderby=~count,
                                                                      groupby=db.comicbox.id, limitby=(0, num_boxes))
 
@@ -99,7 +99,7 @@ def get_largest_boxes(num_boxes):
 
 def get_recent_boxes(num_boxes):
     count = db.comicbox.id.count()
-    recent_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.box_name,
+    recent_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.name,
                                                                     db.comicbox.created_on, count,
                                                                     orderby=~db.comicbox.created_on,
                                                                     groupby=db.comicbox.id, limitby=(0, num_boxes))
@@ -117,6 +117,10 @@ def re_assemble_box_with_count(box):
     re_assembled_box = box.comicbox
     re_assembled_box.count = box._extra['COUNT(comicbox.id)']
     return re_assembled_box
+
+def error():
+    return {'errormsg': request.vars.errormsg}
+
 
 
 def user():
@@ -162,7 +166,6 @@ def fast_download():
                                                       time.localtime(os.path.getmtime(filename)))
 
     return response.stream(open(filename, 'rb'))
-
 
 def call():
     """
