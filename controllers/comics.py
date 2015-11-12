@@ -10,8 +10,13 @@ def mycomics():
     user_comics_id = []
     for row in user_comics:
         user_comics_id.append(row.comicbook.id)
-    artist_comics = db((db.artist.id == db.comicArtist.artist) & (db.comicArtist.comicbook.belongs(user_comics_id))).select(db.comicArtist.comicbook, db.artist.name)
-    writer_comics = db((db.writer.id == db.comicWriter.writer) & (db.comicWriter.comicbook.belongs(user_comics_id))).select(db.comicWriter.comicbook, db.writer.name)
+
+    artist_comics = db(
+        (db.artist.id == db.comicArtist.artist_id) & (db.comicArtist.comicbook_id.belongs(user_comics_id))).select(
+        db.comicArtist.comicbook_id, db.artist.name)
+    writer_comics = db(
+        (db.writer.id == db.comicWriter.writer_id) & (db.comicWriter.comicbook_id.belongs(user_comics_id))).select(
+        db.comicWriter.comicbook_id, db.writer.name)
 
     return {'user_comics': user_comics, 'artist_comics': artist_comics, 'writer_comics': writer_comics}
     # return {'user_comics': user_comics}
@@ -36,4 +41,21 @@ def myboxes():
 
 def comicedit():
     ##verify owner owns the comicbook
-    return {'comicbookid': request.vars.comicbookid}
+    left_joins = [db.comicWriter.on(db.comicWriter.comicbook_id == db.comicbook.id),
+                  db.writer.on(db.comicWriter.writer_id == db.writer.id),
+                  db.comicArtist.on(db.comicArtist.comicbook_id == db.comicbook.id),
+                  db.artist.on(db.comicArtist.artist_id == db.artist.id)]
+
+    search_results = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.title, db.comicbook.id,
+                                                                            db.comicbook.issue_number,
+                                                                            db.comicbook.box_id,
+                                                                            db.artist.name, db.writer.name,
+                                                                            db.comicbook.cover,
+                                                                            left=left_joins)
+
+    existing_publishers = db().select(db.publisher.name)
+    existing_artists = db().select(db.artist.name)
+    existing_writers = db().select(db.writer.name)
+
+    return {'existing_publishers': existing_publishers, 'existing_artists': existing_artists,
+            'existing_writers': existing_writers, 'comicbook_details': search_results}

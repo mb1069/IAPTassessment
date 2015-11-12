@@ -1,2 +1,21 @@
 {{extend 'comic_layout.html'}}
-{{=comicbookid}}
+{{=existing_publishers}}
+{{=existing_artists}}
+{{=existing_writers}}
+{{=comicbook_details}}
+
+<form enctype="multipart/form-data" action="{{=URL('default', 'search')}}" method="post">
+    <label> Title
+        <input name="title"/>
+    </label>
+    <label> Writer
+        <input name="writer"/>
+    </label>
+    <label> Artist
+        <input name="artist"/>
+    </label>
+    <label> Publisher
+        <input name="publisher"/>
+    </label>
+    <input type="submit" value="Submit">
+</form>
