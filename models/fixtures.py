@@ -4,10 +4,9 @@ import os
 
 # db(db.comicbox.id > 0).delete()
 # db(db.comicbook.id > 0).delete()
-# db(db.comicArtist.comicbook_id > 0).delete()
-# db(db.comicWriter.comicbook_id > 0).delete()
+# db.comicArtist.truncate()
+# db.comicWriter.truncate()
 # db(db.publisher.id > 0).delete()
-# db(db.comicPublisher.id > 0).delete()
 
 crypt = CRYPT(key=auth.settings.hmac_key)
 # for i in range(1, 6):

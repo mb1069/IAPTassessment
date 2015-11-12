@@ -43,24 +43,29 @@ def search():
 
     if notempty(form['writer']):
         field_results.append(db(db.writer.name.like('%' + form['writer'] + '%') &
-                                (db.comicWriter.writer == db.writer.id) &
-                                (db.comicbook.id == db.comicWriter.comicbook)).select(db.comicbook.id).column(
+                                (db.comicWriter.writer_id == db.writer.id) &
+                                (db.comicbook.id == db.comicWriter.comicbook_id)).select(db.comicbook.id).column(
             db.comicbook.id))
 
     if notempty(form['artist']):
         field_results.append(db(db.artist.name.like('%' + form['artist'] + '%') &
-                                (db.comicArtist.artist == db.artist.id) &
-                                (db.comicbook.id == db.comicArtist.comicbook)).select(db.comicbook.id).column(
+                                (db.comicArtist.artist_id == db.artist.id) &
+                                (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id).column(
             db.comicbook.id))
 
     if len(field_results) > 0:
         intersected_results = intersect(field_results)
-        search_results = db(db.comicbook.id.belongs(intersected_results)).select(
-            left=[db.comicWriter.on(db.comicWriter.comicbook == db.comicbook.id),
-                  db.writer.on(db.comicWriter.writer == db.writer.id),
-                  db.comicArtist.on(db.comicArtist.comicbook == db.comicbook.id),
-                  db.artist.on(db.comicArtist.artist == db.artist.id)])
-    print search_results
+
+        left_joins = [db.comicWriter.on(db.comicWriter.comicbook_id == db.comicbook.id),
+                      db.writer.on(db.comicWriter.writer_id == db.writer.id),
+                      db.comicArtist.on(db.comicArtist.comicbook_id == db.comicbook.id),
+                      db.artist.on(db.comicArtist.artist_id == db.artist.id)]
+
+        search_results = db(db.comicbook.id.belongs(intersected_results)).select(db.comicbook.title, db.comicbook.id,
+                                                                                 db.comicbook.issue_number,
+                                                                                 db.comicbook.box_id,
+                                                                                 db.artist.name, db.writer.name,
+                                                                                 left=left_joins)
 
     return {'search_results': search_results}
 

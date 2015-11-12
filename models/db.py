@@ -104,13 +104,10 @@ db.define_table('publisher',
 db.define_table('comicbook',
                 Field('box_id', 'reference comicbox', required=True),
                 Field('title', type='string', required=True),
-                Field('cover', type='upload', uploadfield=True, uploadseparate=True, autodelete=True),
+                Field('cover', type='upload', uploadfield=True, autodelete=True),
                 Field('issue_number', type='integer'),
                 Field('publisher', 'reference publisher'),
                 Field('description', type='text'))
-
-
-
 
 # writertable
 

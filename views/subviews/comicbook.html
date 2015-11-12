@@ -10,7 +10,7 @@
         <div class="comicwriter" style="float:left; clear:both">
             Writers:
             {{for writer_row in writer_comics: }}
-                {{if writer_row.comicWriter.comicbook==row.comicbook.id: }}
+                {{if writer_row.comicWriter.comicbook_id==row.comicbook.id: }}
                     {{=writer_row.writer.name}}
                 {{pass}}
             {{pass}}
@@ -18,7 +18,7 @@
         <div class="comicwriter" style="float:left; clear:both">
             Artists:
             {{for artist_row in artist_comics: }}
-                {{if artist_row.comicArtist.comicbook==row.comicbook.id: }}
+                {{if artist_row.comicArtist.comicbook_id==row.comicbook.id: }}
                     {{=artist_row.artist.name}}
                 {{pass}}
             {{pass}}
