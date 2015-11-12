@@ -73,7 +73,7 @@ def intersect(lists):
 
 
 def notempty(string):
-    return (len(string) > 0) & (string is not None)
+    return (string != '') & (string is not None)
 
 
 def get_largest_boxes(num_boxes):

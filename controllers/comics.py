@@ -35,4 +35,5 @@ def myboxes():
 
 
 def comicedit():
-    return {}
+    ##verify owner owns the comicbook
+    return {'comicbookid': request.vars.comicbookid}
