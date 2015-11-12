@@ -133,10 +133,9 @@ db.define_table('comicArtist',
 
 import os
 
-db.comicbox.truncate()
-db.comicbook.truncate()
-if db(db.comicbox.id > -1).count() == 0:
-
+db(db.comicbox.id > -1).delete()
+db(db.comicbook.id > -1).delete()
+if db(db.comicbox.id > 0).count() == 0:
     db.comicbox.truncate()
     db.comicbox.insert(user_id=1, box_name='Box A', private=True)
     db.comicbox.insert(user_id=1, box_name='Box B', private=True)
