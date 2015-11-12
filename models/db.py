@@ -86,14 +86,14 @@ auth.settings.reset_password_requires_verification = True
 # privacy field (if true private, else public)
 db.define_table('comicbox',
                 Field('user_id', 'reference auth_user', required=True),
-                Field('box_name', type='string', required=True),
+                Field('name', type='string', required=True),
                 Field('private', type='boolean', default=True),
                 Field('created_on', 'datetime', readable=False, writable=False, default=request.now))
 
-# Before callback to ensure [user_id, box_name] pairs are unique so that a user cannot have two boxes with the same 
+# Before callback to ensure [user_id, name] pairs are unique so that a user cannot have two boxes with the same
 # name but two users can have a box with the same name
 db.comicbox._before_insert.append(
-    lambda r: db((db.comicbox.user_id == r["user_id"]) & (db.comicbox.box_name == r["box_name"])).select())
+    lambda r: db((db.comicbox.user_id == r["user_id"]) & (db.comicbox.name == r["name"])).select())
 
 # publisher table
 db.define_table('publisher',

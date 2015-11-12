@@ -4,7 +4,7 @@ __author__ = 'miguel'
 def mycomics():
     user_comics = db((auth.user_id == db.comicbox.user_id) &
                      (db.comicbox.id == db.comicbook.box_id)).select(db.comicbook.id, db.comicbox.id,
-                                                                     db.comicbox.box_name, db.comicbook.title,
+                                                                     db.comicbox.name, db.comicbook.title,
                                                                      db.comicbook.cover, db.comicbook.issue_number,
                                                                      db.comicbook.publisher, db.comicbook.description)
     user_comics_id = []
@@ -25,9 +25,9 @@ def mycomics():
 def myboxes():
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(
         db.comicbox.id,
-        db.comicbox.box_name,
+        db.comicbox.name,
         db.comicbox.created_on,
-        groupby=db.comicbox.box_name)
+        groupby=db.comicbox.name)
 
     boxes = []
     for box in user_boxes:
@@ -44,18 +44,30 @@ def comicedit():
     left_joins = [db.comicWriter.on(db.comicWriter.comicbook_id == db.comicbook.id),
                   db.writer.on(db.comicWriter.writer_id == db.writer.id),
                   db.comicArtist.on(db.comicArtist.comicbook_id == db.comicbook.id),
-                  db.artist.on(db.comicArtist.artist_id == db.artist.id)]
+                  db.artist.on(db.comicArtist.artist_id == db.artist.id),
+                  db.publisher.on(db.comicbook.publisher == db.publisher.id)]
 
-    search_results = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.title, db.comicbook.id,
-                                                                            db.comicbook.issue_number,
-                                                                            db.comicbook.box_id,
-                                                                            db.artist.name, db.writer.name,
-                                                                            db.comicbook.cover,
-                                                                            left=left_joins)
+    comic_details = db((db.comicbook.id == request.vars.comicbookid) & (db.comicbook.box_id == db.comicbox.id)).select(
+        db.comicbook.title, db.comicbook.id,
+        db.comicbook.issue_number,
+        db.comicbox.name,
+        db.comicbook.description,
+        db.artist.name, db.writer.name,
+        db.comicbook.cover, db.publisher.name,
 
-    existing_publishers = db().select(db.publisher.name)
-    existing_artists = db().select(db.artist.name)
-    existing_writers = db().select(db.writer.name)
+        left=left_joins)
 
-    return {'existing_publishers': existing_publishers, 'existing_artists': existing_artists,
-            'existing_writers': existing_writers, 'comicbook_details': search_results}
+    if len(comic_details) == 0:
+        redirect(URL('default', 'error', vars={
+            'errormsg': 'An error has occured: comicbook was not found in database.'}))
+    else:
+
+        user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name)
+        existing_publishers = db().select(db.publisher.name)
+        existing_artists = db().select(db.artist.name)
+        existing_writers = db().select(db.writer.name)
+
+        form = SQLFORM(db.comicbook)
+
+        return {'form': form, 'existing_publishers': existing_publishers, 'existing_artists': existing_artists,
+                'existing_writers': existing_writers, 'comicbook_details': comic_details, 'user_boxes': user_boxes}
