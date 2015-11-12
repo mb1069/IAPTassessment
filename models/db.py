@@ -95,16 +95,24 @@ db.define_table('comicbox',
 db.comicbox._before_insert.append(
     lambda r: db((db.comicbox.user_id == r["user_id"]) & (db.comicbox.box_name == r["box_name"])).select())
 
+# publisher table
+db.define_table('publisher',
+                Field('user_id', 'reference auth_user', required=True),
+                Field('name', type='string', required=True))
+
 # comic table
 db.define_table('comicbook',
-                Field('box_id', db.comicbox, required=True),
+                Field('box_id', 'reference comicbox', required=True),
                 Field('title', type='string', required=True),
                 Field('cover', type='upload', uploadfield=True, uploadseparate=True, autodelete=True),
                 Field('issue_number', type='integer'),
-                Field('publisher', type='string'),
+                Field('publisher', 'reference publisher'),
                 Field('description', type='text'))
 
-# writer_table
+
+
+
+# writertable
 
 db.define_table('writer',
                 Field('user_id', 'reference auth_user', required=True),
@@ -113,9 +121,9 @@ db.define_table('writer',
 # comic_writer table
 
 db.define_table('comicWriter',
-                Field('comicbook', 'reference comicbook', required=True),
-                Field('writer', 'reference writer', required=True),
-                primarykey=['comicbook', 'writer'])
+                Field('comicbook_id', 'reference comicbook', required=True),
+                Field('writer_id', 'reference writer', required=True),
+                primarykey=['comicbook_id', 'writer_id'])
 
 # artist_table
 
@@ -127,54 +135,7 @@ db.define_table('artist',
 # artist_writer table
 
 db.define_table('comicArtist',
-                Field('comicbook', 'reference comicbook', required=True),
-                Field('artist', 'reference artist', required=True),
-                primarykey=['comicbook', 'artist'])
+                Field('comicbook_id', 'reference comicbook', required=True),
+                Field('artist_id', 'reference artist', required=True),
+                primarykey=['comicbook_id', 'artist_id'])
 
-import os
-
-db(db.comicbox.id > -1).delete()
-db(db.comicbook.id > -1).delete()
-if db(db.comicbox.id > 0).count() == 0:
-    db.comicbox.truncate()
-    db.comicbox.insert(user_id=1, box_name='Box A', private=True)
-    db.comicbox.insert(user_id=1, box_name='Box B', private=True)
-    db.comicbox.insert(user_id=1, box_name='Box C', private=True)
-    db.comicbox.insert(user_id=1, box_name='Box D', private=True)
-    db.comicbox.insert(user_id=1, box_name='Box E', private=True)
-    db.comicbox.insert(user_id=1, box_name='Box F', private=True)
-
-    db.comicbook.truncate()
-
-    cover_path = os.path.join(os.path.dirname(__file__), '../static/images/superman.jpg')
-
-    db.comicbook.insert(box_id=1, title='Superman1', publisher='DC', cover=open(cover_path))
-    db.comicbook.insert(box_id=2, title='Superman2', publisher='Marvel', cover=open(cover_path))
-    db.comicbook.insert(box_id=2, title='Superman2', cover=open(cover_path))
-    db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
-    db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
-    db.comicbook.insert(box_id=3, title='Superman3', cover=open(cover_path))
-    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-    db.comicbook.insert(box_id=4, title='Superman4', cover=open(cover_path))
-    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-    db.comicbook.insert(box_id=5, title='Superman5', cover=open(cover_path))
-
-    db.artist.truncate()
-    db.writer.truncate()
-    db.comicWriter.truncate()
-    db.comicArtist.truncate()
-
-    db.artist.insert(user_id=1, name='Artsy')
-    db.artist.insert(user_id=1, name='Art')
-    db.comicArtist.insert(comicbook=2, artist=1)
-    db.comicArtist.insert(comicbook=2, artist=2)
-    db.writer.insert(user_id=1, name='Writsy')
-    db.writer.insert(user_id=1, name='Writ')
-    db.comicWriter.insert(comicbook=1, writer=1)
-    db.comicWriter.insert(comicbook=1, writer=2)
