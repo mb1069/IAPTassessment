@@ -55,8 +55,8 @@ if db(db.comicbox.id > 0).count() == 0:
 
     db.artist.insert(user_id=1, name='Artsy')
     db.artist.insert(user_id=1, name='Art')
-    db.comicArtist.insert(comicbook_id=2, artist_id=1)
-    db.comicArtist.insert(comicbook_id=2, artist_id=2)
+    db.comicArtist.insert(comicbook_id=1, artist_id=1)
+    db.comicArtist.insert(comicbook_id=1, artist_id=2)
     db.writer.insert(user_id=1, name='Writsy')
     db.writer.insert(user_id=1, name='Writ')
     db.comicWriter.insert(comicbook_id=1, writer_id=1)
