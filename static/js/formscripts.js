@@ -13,15 +13,10 @@ function readURL(input){
 
 
 
-function addToList(select, value){
-    if (value!= '' && value != undefined && $(select).find('option[value=\''+value+'\']').length==0){
-        $(select).append($("<option></option>")
-            .attr('value', value)
-            .text(value));
-    }
-}
-
-function selectAll(){
-    $('#artists').find('option:not(:selected)').selected=true;
-    $('#writers').find('option:not(:selected)').selected=true;
-}
+//function addToList(select, value){
+//    if (value!= '' && value != undefined && $(select).find('option[value=\''+value+'\']').length==0){
+//        $(select).append($("<option></option>")
+//            .attr('value', value)
+//            .text(value));
+//    }
+//}

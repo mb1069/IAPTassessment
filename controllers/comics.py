@@ -61,13 +61,15 @@ def comicedit():
     comics_artists = db((db.comicArtist.comicbook_id == comic_book_id) & (db.comicArtist.artist_id == db.artist.id)) \
         .select(db.artist.name).column()
     comicbook = comic_details[0].comicbook
-    print 'comicbook'
-    print comicbook
+
+    user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
+
     form = SQLFORM.factory(
-        Field('title', type='string', default=comicbook.title),
-        Field('box_name', type='string', default=comic_details[0].comicbox.name),
+        Field('title', type='string', default=comicbook.title, required=True),
+        Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name, requires=IS_IN_SET(user_boxes, zero=None)),
         # add requires is in box and is owned by user
-        Field('cover', type='upload', default=comicbook.cover),
+
+        Field('cover', type='upload'),
         Field('artists', type='list:string', default=comics_artists),
         Field('writers', type='list:string', default=comics_writers),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
@@ -86,7 +88,6 @@ def comicedit():
             'errormsg': 'An error has occured: comicbook was not found in database.'}))
     else:
 
-        user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name)
         # existing_publishers = db().select(db.publisher.name)
         # existing_artists = db().select(db.artist.name).column()
         # existing_writers = db().select(db.writer.name).column()
