@@ -40,7 +40,7 @@ def myboxes():
 
 
 def comicedit():
-    ##verify owner owns the comicbook
+    # verify owner owns the comicbook
     left_joins = [db.comicWriter.on(db.comicWriter.comicbook_id == db.comicbook.id),
                   db.writer.on(db.comicWriter.writer_id == db.writer.id),
                   db.comicArtist.on(db.comicArtist.comicbook_id == db.comicbook.id),
@@ -54,8 +54,32 @@ def comicedit():
         db.comicbook.description,
         db.artist.name, db.writer.name,
         db.comicbook.cover, db.publisher.name,
-
         left=left_joins)
+    comic_book_id = comic_details[0].comicbook.id
+    comics_writers = db((db.comicWriter.comicbook_id == comic_book_id) & (db.comicWriter.writer_id == db.writer.id)) \
+        .select(db.writer.name).column()
+    comics_artists = db((db.comicArtist.comicbook_id == comic_book_id) & (db.comicArtist.artist_id == db.artist.id)) \
+        .select(db.artist.name).column()
+    comicbook = comic_details[0].comicbook
+    print 'comicbook'
+    print comicbook
+    form = SQLFORM.factory(
+        Field('title', type='string', default=comicbook.title),
+        Field('box_name', type='string', default=comic_details[0].comicbox.name),
+        # add requires is in box and is owned by user
+        Field('cover', type='upload', default=comicbook.cover),
+        Field('artists', type='list:string', default=comics_artists),
+        Field('writers', type='list:string', default=comics_writers),
+        Field('publisher', type='string', default=comic_details[0].publisher.name),
+        Field('issue_number', type='string', default=comicbook.issue_number),
+        Field('description', default=comicbook.description))
+    print 'processing'
+    if form.process().accepted:
+        print 'accepted'
+        return 'accepted'
+    elif form.errors:
+        print 'errors'
+        return 'errors'
 
     if len(comic_details) == 0:
         redirect(URL('default', 'error', vars={
@@ -63,11 +87,10 @@ def comicedit():
     else:
 
         user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name)
-        existing_publishers = db().select(db.publisher.name)
-        existing_artists = db().select(db.artist.name)
-        existing_writers = db().select(db.writer.name)
+        # existing_publishers = db().select(db.publisher.name)
+        # existing_artists = db().select(db.artist.name).column()
+        # existing_writers = db().select(db.writer.name).column()
 
-        form = SQLFORM(db.comicbook)
-
-        return {'form': form, 'existing_publishers': existing_publishers, 'existing_artists': existing_artists,
-                'existing_writers': existing_writers, 'comicbook_details': comic_details, 'user_boxes': user_boxes}
+        return {'comic': comic_details[0], 'form': form, 'comicbook_details': comic_details, 'user_boxes': user_boxes
+                # ,'existing_publishers': existing_publishers, 'existing_artists': existing_artists,'existing_writers': existing_writers,
+                }
