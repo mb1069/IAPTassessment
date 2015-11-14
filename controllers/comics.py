@@ -40,7 +40,21 @@ def myboxes():
 
 
 def comicedit():
-    # verify owner owns the comicbook
+    # Verify comicbookid exists
+    if (request.vars.comicbookid is None) | (len(request.vars.comicbookid) == 0):
+        redirect(URL('default', 'error', vars={
+            'errormsg': 'Error: no coming book selected for editing'}))
+
+    user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
+
+    # Verify user owns comicbook
+    # TODO finish writing and test with multiple users
+    if auth.user_id != db(
+                    (request.vars.comicbookid == db.comicbook.id) & (db.comicbook.box_id == db.comicbox.id)).select(
+        db.comicbox.user_id).column()[0]:
+        redirect(URL('default', 'error', vars={
+            'errormsg': 'An error has occured: attempting to edit another user\'s comic'}))
+
     left_joins = [db.comicWriter.on(db.comicWriter.comicbook_id == db.comicbook.id),
                   db.writer.on(db.comicWriter.writer_id == db.writer.id),
                   db.comicArtist.on(db.comicArtist.comicbook_id == db.comicbook.id),
@@ -55,43 +69,65 @@ def comicedit():
         db.artist.name, db.writer.name,
         db.comicbook.cover, db.publisher.name,
         left=left_joins)
-    comic_book_id = comic_details[0].comicbook.id
-    comics_writers = db((db.comicWriter.comicbook_id == comic_book_id) & (db.comicWriter.writer_id == db.writer.id)) \
-        .select(db.writer.name).column()
-    comics_artists = db((db.comicArtist.comicbook_id == comic_book_id) & (db.comicArtist.artist_id == db.artist.id)) \
-        .select(db.artist.name).column()
+
+    comics_writers = db((db.comicWriter.comicbook_id == request.vars.comicbookid) &
+                        (db.comicWriter.writer_id == db.writer.id)).select(db.writer.name).column()
+    comics_artists = db((db.comicArtist.comicbook_id == request.vars.comicbookid) &
+                        (db.comicArtist.artist_id == db.artist.id)).select(db.artist.name).column()
     comicbook = comic_details[0].comicbook
 
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
 
     form = SQLFORM.factory(
-        Field('title', type='string', default=comicbook.title, required=True),
-        Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name, requires=IS_IN_SET(user_boxes, zero=None)),
-        # add requires is in box and is owned by user
-
-        Field('cover', type='upload'),
+        Field('title', type='string', default=comicbook.title, required=True, requires=IS_NOT_EMPTY()),
+        Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name,
+              requires=IS_IN_SET(user_boxes, zero=None)),
+        Field('cover', type='upload', uploadfolder='upload'),
         Field('artists', type='list:string', default=comics_artists),
         Field('writers', type='list:string', default=comics_writers),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
         Field('issue_number', type='string', default=comicbook.issue_number),
         Field('description', default=comicbook.description))
-    print 'processing'
     if form.process().accepted:
-        print 'accepted'
+        fields = form.vars
+
+        # Updating comicbox
+        boxid = db(db.comicbox.name == fields.box_name).select(db.comicbox.id).column()[0]
+
+        # Update publisher
+        publisher = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.publisher).column()[0]
+        # If only this comicbook reference publisher, update publisher
+        if db(db.comicbook.publisher == publisher).count() == 1:
+            db(db.publisher.id == publisher).update(name=request.vars.publisher)
+        # Else create new publisher
+        else:
+            publisher = db.publisher.insert(user_id=auth.user, name=request.vars.publisher)
+
+        # Update comicbook row
+        db(db.comicbook.id == request.vars.comicbookid).update(title=fields.title,
+                                                               box_id=boxid,
+                                                               issue_number=fields.issue_number,
+                                                               description=fields.description,
+                                                               publisher=publisher)
+
+        # Retrieve list of all current comicbook writer's names
+        writer_names = db((db.comicWriter.writer_id == db.writer.id) & (db.comicWriter.comicbook_id==request.vars.comicbookid)).select(db.writer.name).column()
+        writers_to_remove = list(set(writer_names).difference(fields.writers))
+        writers_nanm_to_add = list(set(fields.writers).difference(writer_names))
+
+        # Remove writers
+        db((db.comicWriter.comicbook_id == request.vars.comicbookid)
+           & (db.comicWriter.writer_id == db.writer.id)
+        & (db.writer.name.belongs(writers_to_remove))).select(db.)
+
+
+
         return 'accepted'
     elif form.errors:
-        print 'errors'
-        return 'errors'
-
-    if len(comic_details) == 0:
-        redirect(URL('default', 'error', vars={
-            'errormsg': 'An error has occured: comicbook was not found in database.'}))
-    else:
+        return 'error'
 
         # existing_publishers = db().select(db.publisher.name)
         # existing_artists = db().select(db.artist.name).column()
         # existing_writers = db().select(db.writer.name).column()
 
-        return {'comic': comic_details[0], 'form': form, 'comicbook_details': comic_details, 'user_boxes': user_boxes
-                # ,'existing_publishers': existing_publishers, 'existing_artists': existing_artists,'existing_writers': existing_writers,
-                }
+    return {'comic': comic_details[0], 'form': form, 'comicbook_details': comic_details, 'user_boxes': user_boxes}

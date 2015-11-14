@@ -90,15 +90,17 @@ db.define_table('comicbox',
                 Field('private', type='boolean', default=True),
                 Field('created_on', 'datetime', readable=False, writable=False, default=request.now))
 
-# Before callback to ensure [user_id, name] pairs are unique so that a user cannot have two boxes with the same
+# Ensure [user_id, name] pairs are unique so that a user cannot have two boxes with the same
 # name but two users can have a box with the same name
-db.comicbox._before_insert.append(
-    lambda r: db((db.comicbox.user_id == r["user_id"]) & (db.comicbox.name == r["name"])).select())
+db.comicbox.name.requires = IS_NOT_IN_DB(db(db.comicbox.user_id == request.vars.user), 'comicbox.name')
 
 # publisher table
 db.define_table('publisher',
                 Field('user_id', 'reference auth_user', required=True),
                 Field('name', type='string', required=True))
+
+# Ensure [user_id. name] pairs are unique to avoid users having multiple publishers with the same name
+db.publisher.name.requires = IS_NOT_IN_DB(db(db.publisher.user_id == request.vars.user), 'publisher.name')
 
 # comic table
 db.define_table('comicbook',
@@ -112,14 +114,18 @@ db.define_table('comicbook',
 # writertable
 
 db.define_table('writer',
-                Field('user_id', 'reference auth_user', required=True),
+                Field('user_id', 'reference auth_user', required=True, ondelete='CASCADE'),
                 Field('name', type='string', required=True))
+
+# Ensure [user_id. name] pairs are unique to avoid users having multiple writers with the same name
+db.writer.name.requires = IS_NOT_IN_DB(db(db.writer.user_id == request.vars.user), 'writer.name')
+
 
 # comic_writer table
 
 db.define_table('comicWriter',
-                Field('comicbook_id', 'reference comicbook', required=True),
-                Field('writer_id', 'reference writer', required=True),
+                Field('comicbook_id', 'reference comicbook', required=True, ondelete='CASCADE'),
+                Field('writer_id', 'reference writer', required=True, ondelete='CASCADE'),
                 primarykey=['comicbook_id', 'writer_id'])
 
 # artist_table
@@ -128,11 +134,14 @@ db.define_table('artist',
                 Field('user_id', 'reference auth_user', required=True),
                 Field('name', type='string', required=True))
 
+# Ensure [user_id. name] pairs are unique to avoid users having multiple writers with the same name
+db.artist.name.requires = IS_NOT_IN_DB(db(db.artist.user_id == request.vars.user), 'artist.name')
+
+
 
 # artist_writer table
 
 db.define_table('comicArtist',
-                Field('comicbook_id', 'reference comicbook', required=True),
-                Field('artist_id', 'reference artist', required=True),
+                Field('comicbook_id', 'reference comicbook', required=True, ondelete='CASCADE'),
+                Field('artist_id', 'reference artist', required=True, ondelete='CASCADE'),
                 primarykey=['comicbook_id', 'artist_id'])
-

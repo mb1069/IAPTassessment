@@ -118,9 +118,9 @@ def re_assemble_box_with_count(box):
     re_assembled_box.count = box._extra['COUNT(comicbox.id)']
     return re_assembled_box
 
+
 def error():
     return {'errormsg': request.vars.errormsg}
-
 
 
 def user():
@@ -166,6 +166,7 @@ def fast_download():
                                                       time.localtime(os.path.getmtime(filename)))
 
     return response.stream(open(filename, 'rb'))
+
 
 def call():
     """
