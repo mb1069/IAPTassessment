@@ -100,7 +100,7 @@ db.define_table('publisher',
                 Field('name', type='string', required=True))
 
 # Ensure [user_id. name] pairs are unique to avoid users having multiple publishers with the same name
-db.publisher.name.requires = IS_NOT_IN_DB(db(db.publisher.user_id == request.vars.user), 'publisher.name')
+# db.publisher.name.requires = IS_NOT_IN_DB(db(db.publisher.user_id == request.vars.user), 'publisher.name')
 
 # comic table
 db.define_table('comicbook',
@@ -125,8 +125,10 @@ db.writer.name.requires = IS_NOT_IN_DB(db(db.writer.user_id == request.vars.user
 
 db.define_table('comicWriter',
                 Field('comicbook_id', 'reference comicbook', required=True, ondelete='CASCADE'),
-                Field('writer_id', 'reference writer', required=True, ondelete='CASCADE'),
-                primarykey=['comicbook_id', 'writer_id'])
+                Field('writer_id', 'reference writer', required=True, ondelete='CASCADE'))
+
+# db.comicWriter.comicbook_id.requires = IS_NOT_IN_DB(db('comicWriter.comicbook_id', 'comicWriter.writer_id'))
+
 
 # artist_table
 
