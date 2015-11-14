@@ -96,12 +96,15 @@ def comicedit():
 
         # Update publisher
         publisher = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.publisher).column()[0]
-        # If only this comicbook reference publisher, update publisher
+        # If only this comicbook references publisher, update publisher
         if db(db.comicbook.publisher == publisher).count() == 1:
             db(db.publisher.id == publisher).update(name=request.vars.publisher)
         # Else create new publisher
         else:
             publisher = db.publisher.insert(user_id=auth.user, name=request.vars.publisher)
+
+        # TODO delete publishers with no comics
+
 
         # Update comicbook row
         db(db.comicbook.id == request.vars.comicbookid).update(title=fields.title,
@@ -109,18 +112,22 @@ def comicedit():
                                                                issue_number=fields.issue_number,
                                                                description=fields.description,
                                                                publisher=publisher)
-
+        # TODO finish implementing/verify this actually works
         # Retrieve list of all current comicbook writer's names
-        writer_names = db((db.comicWriter.writer_id == db.writer.id) & (db.comicWriter.comicbook_id==request.vars.comicbookid)).select(db.writer.name).column()
-        writers_to_remove = list(set(writer_names).difference(fields.writers))
-        writers_nanm_to_add = list(set(fields.writers).difference(writer_names))
+        writer_names = db((db.comicWriter.writer_id == db.writer.id) & (db.comicWriter.comicbook_id == request.vars.comicbookid)).select(db.writer.name).column()
+        writer_names_to_add = list(set(fields.writers).difference(writer_names))
 
-        # Remove writers
-        db((db.comicWriter.comicbook_id == request.vars.comicbookid)
-           & (db.comicWriter.writer_id == db.writer.id)
-        & (db.writer.name.belongs(writers_to_remove))).select(db.)
+        # Remove all writerComic entries for this comic
+        db(db.comicWriter.comicbook_id == request.vars.comicbookid).delete()
+        print 'after delete ', db(db.comicWriter.comicbook_id==request.vars.comicbookid).select(db.comicWriter.writer_id).column()
 
+        # Add writers
+        for writer in writer_names_to_add:
+            db.writer.insert(user_id=auth.user_id, name=writer)
 
+        comic_writer_ids = db(db.writer.name.belongs(writer_names)).select(db.writer.id).column()
+        for writer_id in comic_writer_ids:
+            db.comicWriter.insert(comicbook_id=request.vars.comicbookid, writer_id=writer_id)
 
         return 'accepted'
     elif form.errors:
