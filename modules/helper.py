@@ -1,3 +1,8 @@
+
+def submit_search_form(form, db):
+        return search_results
+
+
 def submit_newcomic_form(form, db, request, auth):
     print 'a'
 
@@ -111,3 +116,14 @@ def cleanup_artists(db):
     all_artists_in_db = db().select(db.artist.id).column()
     artists_w_no_comics = list(set(all_artists_in_db).difference(all_artists_w_comics))
     db(db.artist.id.belongs(artists_w_no_comics)).delete()
+
+
+def intersect(lists):
+    s = set(lists[0])
+    for l in lists:
+        s &= set(l)
+    return list(s)
+
+
+def notempty(string):
+    return (string != '') & (string is not None)
