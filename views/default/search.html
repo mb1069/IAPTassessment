@@ -1,5 +1,8 @@
 {{include 'comic_layout.html'}}
 <form enctype="multipart/form-data" action="{{=URL('default', 'search')}}" method="post">
+    <label> Keyword
+        <input name="keyword"/>
+    </label>
     <label> Title
         <input name="title"/>
     </label>
