@@ -1,5 +1,7 @@
 __author__ = 'miguel'
 
+import helper
+
 
 def mycomics():
     user_comics = db((auth.user_id == db.comicbox.user_id) &
@@ -41,17 +43,21 @@ def myboxes():
 
 def comicedit():
     # Verify comicbookid exists
-    if (request.vars.comicbookid is None) | (len(request.vars.comicbookid) == 0):
+    if request.vars.comicbookid is None:
         redirect(URL('default', 'error', vars={
-            'errormsg': 'Error: no coming book selected for editing'}))
+            'errormsg': 'Error: invalid comicbook id:' + request.vars.comicbookid}))
+
+    if len(db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.id)) == 0:
+        redirect(URL('default', 'error', vars={
+            'errormsg': 'Error: comicbook id does not exist in database'}))
 
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
 
     # Verify user owns comicbook
-    # TODO finish writing and test with multiple users
-    if auth.user_id != db(
-                    (request.vars.comicbookid == db.comicbook.id) & (db.comicbook.box_id == db.comicbox.id)).select(
-        db.comicbox.user_id).column()[0]:
+    print db((db.comicbox.user_id == auth.user_id) & (db.comicbook.box_id == db.comicbox.id)).select(
+            db.comicbook.id).column()
+    if len(db((db.comicbox.user_id == auth.user_id) & (db.comicbook.id == request.vars.comicbookid)
+                      & (db.comicbook.box_id == db.comicbox.id)).select()) == 0:
         redirect(URL('default', 'error', vars={
             'errormsg': 'An error has occured: attempting to edit another user\'s comic'}))
 
@@ -83,58 +89,17 @@ def comicedit():
         Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name,
               requires=IS_IN_SET(user_boxes, zero=None)),
         Field('cover', type='upload', uploadfolder='upload'),
-        Field('artists', type='list:string', default=comics_artists),
-        Field('writers', type='list:string', default=comics_writers),
+        Field('artists', type='list:string', default=comics_artists, requires=IS_NOT_EMPTY()),
+        Field('writers', type='list:string', default=comics_writers, requires=IS_NOT_EMPTY()),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
+        Field('update_all', type='boolean', default=False, label='Update publisher for all comics'),
         Field('issue_number', type='string', default=comicbook.issue_number),
         Field('description', default=comicbook.description))
+
     if form.process().accepted:
-        fields = form.vars
-
-        # Updating comicbox
-        boxid = db(db.comicbox.name == fields.box_name).select(db.comicbox.id).column()[0]
-
-        # Update publisher
-        publisher = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.publisher).column()[0]
-        # If only this comicbook references publisher, update publisher
-        if db(db.comicbook.publisher == publisher).count() == 1:
-            db(db.publisher.id == publisher).update(name=request.vars.publisher)
-        # Else create new publisher
-        else:
-            publisher = db.publisher.insert(user_id=auth.user, name=request.vars.publisher)
-
-        # TODO delete publishers with no comics
-
-
-        # Update comicbook row
-        db(db.comicbook.id == request.vars.comicbookid).update(title=fields.title,
-                                                               box_id=boxid,
-                                                               issue_number=fields.issue_number,
-                                                               description=fields.description,
-                                                               publisher=publisher)
-        # TODO finish implementing/verify this actually works
-        # Retrieve list of all current comicbook writer's names
-        writer_names = db((db.comicWriter.writer_id == db.writer.id) & (db.comicWriter.comicbook_id == request.vars.comicbookid)).select(db.writer.name).column()
-        writer_names_to_add = list(set(fields.writers).difference(writer_names))
-
-        # Remove all writerComic entries for this comic
-        db(db.comicWriter.comicbook_id == request.vars.comicbookid).delete()
-        print 'after delete ', db(db.comicWriter.comicbook_id==request.vars.comicbookid).select(db.comicWriter.writer_id).column()
-
-        # Add writers
-        for writer in writer_names_to_add:
-            db.writer.insert(user_id=auth.user_id, name=writer)
-
-        comic_writer_ids = db(db.writer.name.belongs(writer_names)).select(db.writer.id).column()
-        for writer_id in comic_writer_ids:
-            db.comicWriter.insert(comicbook_id=request.vars.comicbookid, writer_id=writer_id)
-
+        helper.submit_comicedit_form(form, db, request, auth)
         return 'accepted'
     elif form.errors:
         return 'error'
 
-        # existing_publishers = db().select(db.publisher.name)
-        # existing_artists = db().select(db.artist.name).column()
-        # existing_writers = db().select(db.writer.name).column()
-
-    return {'comic': comic_details[0], 'form': form, 'comicbook_details': comic_details, 'user_boxes': user_boxes}
+    return {'form': form}
