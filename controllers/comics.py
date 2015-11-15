@@ -54,8 +54,6 @@ def comicedit():
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
 
     # Verify user owns comicbook
-    print db((db.comicbox.user_id == auth.user_id) & (db.comicbook.box_id == db.comicbox.id)).select(
-            db.comicbook.id).column()
     if len(db((db.comicbox.user_id == auth.user_id) & (db.comicbook.id == request.vars.comicbookid)
                       & (db.comicbook.box_id == db.comicbox.id)).select()) == 0:
         redirect(URL('default', 'error', vars={
@@ -94,7 +92,7 @@ def comicedit():
         Field('publisher', type='string', default=comic_details[0].publisher.name),
         Field('update_all', type='boolean', default=False, label='Update publisher for all comics'),
         Field('issue_number', type='string', default=comicbook.issue_number),
-        Field('description', default=comicbook.description))
+        Field('description', type='text', default=comicbook.description))
 
     if form.process().accepted:
         helper.submit_comicedit_form(form, db, request, auth)

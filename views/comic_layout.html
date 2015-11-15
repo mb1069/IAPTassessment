@@ -68,7 +68,7 @@ middle_column = {0: mc0, 1: mc1, 2: mc2}[
             {{='auth' in globals() and auth.navbar('Welcome',mode='dropdown') or ''}}
             </ul>
         {{if response.menu:}}
-        {{=MENU(response.menu, _class='nav navbar-nav',li_class='dropdown',ul_class='dropdown-menu')}}
+            {{=MENU(response.menu, _class='nav navbar-nav',li_class='dropdown',ul_class='dropdown-menu')}}
         {{pass}}
         </div>
     </div>

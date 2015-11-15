@@ -1,5 +1,5 @@
 {{include 'comic_layout.html'}}
-<form enctype="multipart/form-data" action="{{=URL('default', 'search')}}" method="post">
+<!--<form enctype="multipart/form-data" action="{{=URL('default', 'search')}}" method="post">
     <label> Keyword
         <input name="keyword"/>
     </label>
@@ -16,8 +16,7 @@
         <input name="publisher"/>
     </label>
     <input type="submit" value="Submit">
-</form>
+</form> -->
 
-            {{#if search_results is not None:}}
-        {{=search_results}}
-    {{#pass}}
+{{=form2}}
+{{=search_results}}
