@@ -1,10 +1,43 @@
+def submit_comiccreate_form(form, db, request, auth):
+    fields = form.vars
+    print fields
+    print 'auth'
+    print auth.user_id
+    # TODO
+    # Publisher
+    # If publisher already exists, get reference
+    p = db((db.publisher.name == fields.publisher) & (db.publisher.user_id == auth.user_id)).select(
+        db.publisher.id).column()
+    if len(p) == 1:
+        publisher_id = p[0]
+    else:
+        publisher_id = db.publisher.insert(user_id=auth.user_id, name=fields.publisher)
 
-def submit_search_form(form, db):
-        return search_results
+    # Insert comic
+    boxid = db(db.comicbox.name == fields.box_name).select(db.comicbox.id).column()[0]
+    comicbook_id = db.comicbook.insert(box_id=boxid, title=fields.title, cover=fields.cover,
+                                       issue_number=fields.issue_number, publisher=publisher_id)
+    artist_id = []
+    for art in fields.artists:
+        a = db((db.artist.name == art) & (db.artist.user_id == auth.user_id)).select(db.artist.id).column()
+        if len(a) == 1:
+            artist_id.append(a)
+        else:
+            artist_id.append(db.artist.insert(name=art, user_id=auth.user_id))
+    for a_id in artist_id:
+        db.comicArtist.insert(comicbook_id=comicbook_id, artist_id=a_id)
+
+    writer_id = []
+    for writer in fields.writers:
+        a = db((db.writer.name == writer) & (db.writer.user_id == auth.user_id)).select(db.writer.id).column()
+        if len(a) == 1:
+            writer_id.append(a)
+        else:
+            writer_id.append(db.writer.insert(name=writer, user_id=auth.user_id))
+    for a_id in writer_id:
+        db.comicWriter.insert(comicbook_id=comicbook_id, writer_id=a_id)
 
 
-def submit_newcomic_form(form, db, request, auth):
-    print 'a'
 
 
 def submit_comicedit_form(form, db, request, auth):
@@ -67,7 +100,6 @@ def submit_comicedit_form(form, db, request, auth):
 
     # Remove all artistComic entries for this comic
     print db(db.comicArtist.comicbook_id == request.vars.comicbookid).select()
-    db(db.comicArtist.comicbook_id == request.vars.comicbookid).delete()
     print 'after delete ', db(db.comicArtist.comicbook_id == request.vars.comicbookid).select(
         db.comicArtist.artist_id).column()
 
