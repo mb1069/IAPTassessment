@@ -41,6 +41,35 @@ def myboxes():
     return {'user_boxes': boxes}
 
 
+def comiccreate():
+    # Verify comicbookid exists
+    if auth.user_id is None:
+        redirect(URL('default', 'error', vars={
+            'errormsg': 'An error has occured: user is not logged in. Please login or create an account using the menu in the top right.'}))
+
+    user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
+
+    form = SQLFORM.factory(
+        Field('title', type='string', required=True, requires=IS_NOT_EMPTY()),
+        Field('box_name', type='string', required=True,
+              requires=IS_IN_SET(user_boxes, zero=None)),
+        Field('cover', type='upload', uploadfolder='upload'),
+        Field('artists', type='list:string', requires=IS_NOT_EMPTY()),
+        Field('writers', type='list:string', requires=IS_NOT_EMPTY()),
+        Field('publisher', type='string'),
+        Field('issue_number', type='integer'),
+        Field('description', type='text'))
+
+    if form.process().accepted:
+        helper.submit_comiccreate_form(form, db, request, auth)
+        return 'accepted'
+    elif form.errors:
+        return 'error'
+
+    return {'form': form}
+
+
+
 def comicedit():
     # Verify comicbookid exists
     if request.vars.comicbookid is None:
@@ -90,7 +119,7 @@ def comicedit():
         Field('artists', type='list:string', default=comics_artists, requires=IS_NOT_EMPTY()),
         Field('writers', type='list:string', default=comics_writers, requires=IS_NOT_EMPTY()),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
-        Field('update_all', type='boolean', default=False, label='Update publisher for all comics'),
+        Field('update_all', type='boolean', default=False, label='Update the publisher of all of your comics with the same publisher.'),
         Field('issue_number', type='string', default=comicbook.issue_number),
         Field('description', type='text', default=comicbook.description))
 
@@ -101,3 +130,5 @@ def comicedit():
         return 'error'
 
     return {'form': form}
+
+

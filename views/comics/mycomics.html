@@ -4,9 +4,11 @@
             {{include 'subviews/comicbook.html'}}
 
     {{pass}}
+        {{include 'subviews/add_comic.html'}}
 {{else:}}
     <div>Please login to view your comics!</div>
 {{pass}}
 {{=user_comics}}
         {{=writer_comics}}
         {{=artist_comics}}
+
