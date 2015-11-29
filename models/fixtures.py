@@ -15,13 +15,14 @@ crypt = CRYPT(key=auth.settings.hmac_key)
 #     db.auth_membership.insert(id=i, user_id=i, group_id=i)
 i = 1
 if db(db.auth_user.id >= 0).count() == 0:
-    db.auth_user.insert(id=i, first_name='dadude941', last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
+    db.auth_user.insert(id=i, first_name='username %s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
                         password=crypt('password%s' % i)[0])
-if db(db.auth_user.id > 0).count() == 0:
-    db.auth_user.insert(id=i, first_name='dadude941', last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
-                        password=crypt('aa')[0])
-    db.auth_group.insert(id=i, role='user%s' % i, description='Group uniquely assigned to user %s' % i)
-    db.auth_membership.insert(id=i, user_id=i, group_id=i)
+    
+# if db(db.auth_user.id > 0).count() == 0:
+#     db.auth_user.insert(id=i, first_name='dadude941', last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
+#                         password=crypt('aa')[0])
+    # db.auth_group.insert(id=i, role='user%s' % i, description='Group uniquely assigned to user %s' % i)
+    # db.auth_membership.insert(id=i, user_id=i, group_id=i)
 
 if db(db.comicbox.id > 0).count() == 0:
     db.publisher.insert(user_id=1, name='DC')
