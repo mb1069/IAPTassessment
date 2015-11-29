@@ -16,7 +16,7 @@ crypt = CRYPT(key=auth.settings.hmac_key)
 
 i = 1
 if db(db.auth_user.id >= 0).count() == 0:
-    db.auth_user.insert(id=i, first_name='username %s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
+    db.auth_user.insert(id=i, first_name='username%s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
                         password=crypt('password%s' % i)[0])
 
 if db(db.comicbox.id > 0).count() == 0:
