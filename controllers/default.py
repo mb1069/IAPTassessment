@@ -18,7 +18,9 @@
 # - user is required for authentication and authorization
 # - download is for downloading files uploaded in the db (does streaming)
 ########################################################################
-import os, time, helper
+import os
+import time
+import helper
 
 
 def index():
@@ -179,8 +181,8 @@ def download():
 
 
 def fast_download():
-    # very basic security (only allow fast_download on your_table.upload_field):
-    if not request.args(0).startswith("db.your_table.your_field"):
+    # very basic security (only allow fast_download on db.comicbook.cover):
+    if not request.args(0).startswith("db.comicbook.cover"):
         return download()
     # remove/add headers that prevent/favors client-side caching
     # 7days
@@ -189,6 +191,7 @@ def fast_download():
     del response.headers['Expires']
     filename = os.path.join(request.folder, 'uploads', request.args(0))
     # send last modified date/time so client browser can enable client-side caching
+    print filename
     response.headers['Last-Modified'] = time.strftime("%a, %d %b %Y %H:%M:%S +0000",
                                                       time.localtime(os.path.getmtime(filename)))
 
