@@ -1,9 +1,8 @@
+import os, shutil
+
+
 def submit_comiccreate_form(form, db, request, auth):
     fields = form.vars
-    print fields
-    print 'auth'
-    print auth.user_id
-    # TODO
     # Publisher
     # If publisher already exists, get reference
     p = db((db.publisher.name == fields.publisher) & (db.publisher.user_id == auth.user_id)).select(
@@ -15,15 +14,19 @@ def submit_comiccreate_form(form, db, request, auth):
 
     # Insert comic
     boxid = db(db.comicbox.name == fields.box_name).select(db.comicbox.id).column()[0]
+    print 'cover: ' + fields.cover
+
+    # TODO fix cover not uploading properly
     comicbook_id = db.comicbook.insert(box_id=boxid, title=fields.title, cover=fields.cover,
                                        issue_number=fields.issue_number, publisher=publisher_id)
     artist_id = []
     for art in fields.artists:
         a = db((db.artist.name == art) & (db.artist.user_id == auth.user_id)).select(db.artist.id).column()
         if len(a) == 1:
-            artist_id.append(a)
+            artist_id.extend(a)
         else:
             artist_id.append(db.artist.insert(name=art, user_id=auth.user_id))
+
     for a_id in artist_id:
         db.comicArtist.insert(comicbook_id=comicbook_id, artist_id=a_id)
 
@@ -31,18 +34,16 @@ def submit_comiccreate_form(form, db, request, auth):
     for writer in fields.writers:
         a = db((db.writer.name == writer) & (db.writer.user_id == auth.user_id)).select(db.writer.id).column()
         if len(a) == 1:
-            writer_id.append(a)
+            writer_id.extend(a)
         else:
             writer_id.append(db.writer.insert(name=writer, user_id=auth.user_id))
     for a_id in writer_id:
         db.comicWriter.insert(comicbook_id=comicbook_id, writer_id=a_id)
 
 
-
-
 def submit_comicedit_form(form, db, request, auth):
     fields = form.vars
-
+    print fields.cover
     # Updating comicbox
     boxid = db(db.comicbox.name == fields.box_name).select(db.comicbox.id).column()[0]
 
@@ -67,6 +68,7 @@ def submit_comicedit_form(form, db, request, auth):
                                                            box_id=boxid,
                                                            issue_number=fields.issue_number,
                                                            description=fields.description,
+                                                           cover=fields.cover,
                                                            publisher=publisher_id)
 
     # Retrieve list of all current comicbook writer's names
@@ -99,9 +101,7 @@ def submit_comicedit_form(form, db, request, auth):
     artist_names_to_add = list(set(fields.artists).difference(artist_names))
 
     # Remove all artistComic entries for this comic
-    print db(db.comicArtist.comicbook_id == request.vars.comicbookid).select()
-    print 'after delete ', db(db.comicArtist.comicbook_id == request.vars.comicbookid).select(
-        db.comicArtist.artist_id).column()
+    db(db.comicArtist.comicbook_id == request.vars.comicbookid).delete()
 
     # Add artists
     for artist in artist_names_to_add:
@@ -112,6 +112,7 @@ def submit_comicedit_form(form, db, request, auth):
     if type(fields.artists) is str:
         fields.artists = [fields.artists]
     comic_artist_ids = db(db.artist.name.belongs(fields.artists)).select(db.artist.id).column()
+
 
     # Insert [comicbook_id, artist_id] pairs into comicArtist
     for artist_id in comic_artist_ids:

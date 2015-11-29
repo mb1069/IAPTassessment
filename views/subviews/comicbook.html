@@ -1,31 +1,36 @@
-<div class="comic" style="background-image: url({{=URL(r=request, c='default', f='fast_download',  args=row.comicbook.cover, host=True)}});">
-    <div class="hovertext">
-        <div class="comictitle">
+{{if len(row.comicbook.cover)>0:}}
+    <div id = "{{=row.comicbook.id}}" class="comic" style="background-image: url({{=URL(r=request, c='default', f='fast_download',  args=row.comicbook.cover, host=True)}});">
+{{else:}}
+    <div id = "{{=row.comicbook.id}}" class="comic" style="background-image: url({{=URL('static', 'images', args='comic_cover_placeholder.png')}});">
+{{pass}}
+        <div class="hovertext">
+            <div class="comictitle">
             {{if (not row.comicbook.publisher) & (row.comicbook.publisher is not None):}}
                 {{=row.comicbook.publisher}}'s <br> {{=row.comicbook.title}}
             {{else:}}
                 {{=row.comicbook.title}}
             {{pass}}
-        </div>
-        <div class="comicwriter" style="float:left; clear:both">
-            Writers:
+            </div>
+            <div class="comicwriter" style="float:left; clear:both">
+                Writers:
             {{for writer_row in writer_comics: }}
                 {{if writer_row.comicWriter.comicbook_id==row.comicbook.id: }}
                     {{=writer_row.writer.name}}
                 {{pass}}
             {{pass}}
-        </div>
-        <div class="comicwriter" style="float:left; clear:both">
-            Artists:
+            </div>
+            <div class="comicwriter" style="float:left; clear:both">
+                Artists:
             {{for artist_row in artist_comics: }}
                 {{if artist_row.comicArtist.comicbook_id==row.comicbook.id: }}
                     {{=artist_row.artist.name}}
                 {{pass}}
             {{pass}}
-        </div>
-        <div class="comic-editing">
-            <a href="{{=URL('comics', 'comicedit.html', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a>
-            <img src="{{=URL('static', 'images', args='delete.png')}}" height="20px" width="20px"/>
+            </div>
+            <div class="comic-editing">
+                <a href="{{=URL('comics', 'comicview', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='view.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a>
+                <a href="{{=URL('comics', 'comicedit', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a>
+                <img class="deleteIcon" onclick="deleteComic('{{=row.comicbook.id}}', '{{=row.comicbook.title}}', '{{=URL('comics', 'comicdelete')}}')", src="{{=URL('static', 'images', args='delete.png')}}" height="20px" width="20px"/>
+            </div>
         </div>
     </div>
-</div>
