@@ -27,6 +27,6 @@
 <p>{{=title}}</p>
 {{if owns_comic:}}
 <a href="{{=URL('comics', 'comicedit', vars={'comicbookid': comicbookid})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="40px" width="40px"/></a>
-<img class="deleteIcon" onclick="deleteComic('{{=comicbookid}}', '{{=title}}', '{{=URL('comics', 'comicdelete')}}')", src="{{=URL('static', 'images', args='delete.png')}}" height="40px" width="40px"/>
+<img class="deleteIcon" onclick="deleteComic('{{=comicbookid}}', '{{=title}}', '{{=URL('comics', 'comicdelete')}}', '{{=URL('comics', 'mycomics')}}')" src="{{=URL('static', 'images', args='delete.png')}}" height="40px" width="40px"/>
 {{pass}}
 </div>
