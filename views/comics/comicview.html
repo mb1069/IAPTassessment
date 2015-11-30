@@ -1,11 +1,13 @@
 {{extend 'comic_layout.html'}}
+<div class="pagetitle">
+    {{=title}}
+</div>
 
 <div style="float:left">
 <img height="400" width="300" src="{{=URL(r=request, c='default', f='fast_download',  args=cover, host=True)}}"/>
 </div>
 
 <div style="float:left; ">
-<p>{{=title}}</p>
 <p>{{=cover}}</p>
 <p>{{=issue_number}}</p>
     Writers

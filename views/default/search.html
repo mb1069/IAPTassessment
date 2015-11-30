@@ -17,6 +17,45 @@
     </label>
     <input type="submit" value="Submit">
 </form> -->
+<div id="searchform" style="width:52em; margin:0 auto;">
+    {{=form2}}
+</div>
+{{if len(search_results)>0:}}
+    <div id="searchresults">
+    <table class="searchresultstable">
+        <tr>
+            <th align="center">User id</th>
+            <th align="center">Box name</th>
+            <th align="center">Title</th>
+            <th align="center">Publisher</th>
+            <th align="center">Issue number</th>
+            <th align="center">Writers</th>
+            <th align="center">Artists</th>
+            <th align="center">View</th>
+            <th align="center">Edit</th>
+            <th align="center">Copy</th>
+        </tr>
+    {{for row in search_results:}}
+        <tr>
+            <td class="first" align="center">{{=row.comicbox.user_id}}</td>
+            <td align="center">{{=row.comicbox.name}}</td>
+            <td align="center">{{=row.comicbook.title}}</td>
+            <td align="center">{{=row.publisher.name}}</td>
+            <td align="center">{{=row.comicbook.issue_number}}</td>
+            <td align="center">{{=row.writerNames}}</td>
+            <td align="center">{{=row.artistNames}}</td>
+            <td align="center"><a href="{{=URL('comics', 'comicview', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='view.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
+            {{if not row.isOwnedByCurrentUser:}}
+                <td align="center"><a href="{{=URL('comics', 'comicedit', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
+                <td class="last"></td>
+            {{else:}}
+                <td></td>
+                <td class="last" align="center"><a href="{{=URL('comics', 'comiccreate', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='copy.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
+            {{pass}}
 
-{{=form2}}
-{{=search_results}}
+        </tr>
+        {{pass}}
+        </table>
+
+    </div>
+{{pass}}
