@@ -1,7 +1,7 @@
 {{extend 'comic_layout.html'}}
 {{if auth.is_logged_in():}}
     {{for box in user_boxes:}}
-            {{include 'largecomicbox.html'}}
+            {{include 'subviews/largecomicbox.html'}}
     {{pass}}
         {{include 'subviews/add_box.html'}}
     <div style="width:100%; clear:both">

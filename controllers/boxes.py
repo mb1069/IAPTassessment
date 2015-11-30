@@ -2,22 +2,34 @@ import helper
 
 
 def boxview():
+    print request.vars
     # Deal with non-existent Ids
     if len(db(db.comicbox.id == request.vars.boxid).select(db.comicbox.id)) == 0:
         session.flash = 'Box ID does not exist!'
         redirect(URL('default', 'index'))
-
     # Deal with private boxes
     box = db(db.comicbox.id == request.vars.boxid).select()[0]
-    if box.private & box.user_id != auth.user_id:
+
+    if box.private & (box.user_id != auth.user_id):
         session.flash = 'Box is private!'
         redirect(URL('default', 'index'))
+
+    items_per_page = 5
+
+    if len(request.vars):
+        page = int(request.vars.page)
+    else:
+        page = 0
+    if len(request.args) == 2:
+        numitems = int(request.vars.numitems)
+    else:
+        numitems = db(db.comicbook.box_id == request.vars.boxid).count()
 
     box_comics = db((db.comicbox.id == request.vars.boxid) & (db.comicbook.box_id == request.vars.boxid)).select(
         db.comicbook.id, db.comicbox.id,
         db.comicbox.name, db.comicbook.title,
         db.comicbook.cover, db.comicbook.issue_number,
-        db.comicbook.publisher, db.comicbook.description)
+        db.comicbook.publisher, db.comicbook.description, limitby=(page * items_per_page, (page + 1) * items_per_page))
     record = db.comicbox(request.vars.boxid)
     form = SQLFORM(db.comicbox, record, deletable=True, submit_button="Update", delete_label="Check to delete")
     form.vars.name = db(db.comicbox.id == request.vars.boxid).select(db.comicbox.id).column()[0]
@@ -25,7 +37,7 @@ def boxview():
     if form.process().accepted:
 
         if form.deleted:
-            helper.moveComicsToUnfiled(db, auth.user_id)
+            helper.move_comics_to_unfiled(db, auth.user_id)
             session.flash = 'Box deleted!'
             redirect(URL('boxes', 'myboxes'))
         else:
@@ -45,7 +57,10 @@ def boxview():
             'box_comics': box_comics,
             'artist_comics': artist_comics,
             'writer_comics': writer_comics,
-            'form': form}
+            'form': form,
+            "page": page,
+            "numitems": numitems,
+            "display_next": numitems>(page+1)*items_per_page}
 
 
 def boxcreate():

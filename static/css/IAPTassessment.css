@@ -1,11 +1,11 @@
 
 
-.mainLeft {
+.indexLeft {
     float:left;
     width:49%;
     overflow:hidden;
 }
-.mainRight {
+.indexRight {
     float:right;
     width:49%;
     overflow:scroll;
@@ -19,6 +19,8 @@
 
 .comicbox-title {
     border: 1px solid;
+    padding-left: 1em;
+    padding-right:1em;
     text-align: center;
     width: 100%;
     height:2em;
@@ -29,12 +31,15 @@
 }
 
 .comicbox {
-    border: 1px dotted black;
-    width:16em;
-    height: 16em;
+    border: 1px solid black;
+    width: 377px;
     float:left;
     margin: 1em;
     overflow:hidden;
+}
+
+.comicbox-comic-icon{
+    float:left;
 }
 
 .box-attribute {

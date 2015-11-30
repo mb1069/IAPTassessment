@@ -24,9 +24,51 @@ import helper
 
 
 def index():
-    largest_boxes = helper.get_largest_boxes(db)
-    recent_boxes = helper.get_recent_boxes(db)
+    largest_boxes = get_largest_boxes(db)
+    recent_boxes = get_recent_boxes(db)
     return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes}
+
+
+def get_largest_boxes(db):
+    count = db.comicbox.id.count()
+    largest_boxes = db((db.comicbox.id == db.comicbook.box_id) & (db.comicbox.private == False)).select(
+                db.comicbox.id,
+                db.comicbox.name,
+                db.comicbox.user_id,
+                count,
+                orderby=~count,
+                groupby=db.comicbox.id,
+                limitby=(
+                    0, 5))
+
+    boxes = []
+    for box in largest_boxes:
+        box.id = box.comicbox.id
+        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title, db.comicbook.cover,
+                    db.comicbook.description, db.comicbook.issue_number,
+                    db.comicbook.publisher, limitby=(0, 10))
+
+        boxes.append((helper.re_assemble_box_with_count(box), comics))
+
+    return boxes
+
+
+def get_recent_boxes(db):
+    recent_boxes = db(db.comicbox.private == False).select(
+                db.comicbox.id,
+                db.comicbox.name,
+                db.comicbox.created_on,
+                orderby=~db.comicbox.created_on,
+                limitby=(0, 5))
+
+    boxes = []
+    for box in recent_boxes:
+        comics = db(db.comicbook.box_id == box.id).select(db.comicbook.title,
+                                                                   db.comicbook.cover, db.comicbook.description,
+                                                                   db.comicbook.issue_number, db.comicbook.publisher, limitby=(0,5))
+        boxes.append((box, comics))
+
+    return boxes
 
 
 def search():
@@ -168,7 +210,6 @@ def fast_download():
     del response.headers['Expires']
     filename = os.path.join(request.folder, 'uploads', request.args(0))
     # send last modified date/time so client browser can enable client-side caching
-    print filename
     response.headers['Last-Modified'] = time.strftime("%a, %d %b %Y %H:%M:%S +0000",
                                                       time.localtime(os.path.getmtime(filename)))
 
