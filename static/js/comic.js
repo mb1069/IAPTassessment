@@ -6,9 +6,10 @@ function deleteComic(id, comicbook_name, url, myComicsURL){
             data: {'comicbookid': id},
             success: function(response){
                 console.log("SUCCESS");
-                if ($("#"+id).length>0) {
-                    $("#" + id).hide('slow', function () {
-                        $("#" + id).remove();
+                var div = $("#" + id);
+                if (div.length>0) {
+                    div.hide('slow', function () {
+                        div.remove();
                     });
                 } else {
                     window.location.href = myComicsURL;
