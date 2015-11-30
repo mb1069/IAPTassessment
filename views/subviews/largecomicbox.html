@@ -1,0 +1,23 @@
+<div class="comicbox">
+    <div class="comicbox-title">
+        {{=box.name}}  {{=box.created_on}} {{=box.count}}
+    </div>
+
+    <div class="comics-area">
+        {{if box.count>0:}}
+            {{=box.comicbook}}
+            {{for comic in list(box.comicbook):}}
+                {{=comic}}
+            {{pass}}
+            <!--
+                    <div class="comic-icon">
+                            <img height="130" width="100" src="=URL(r=request, c='default', f='fast_download',  args=box.comicbook[0].cover, host=True)}}"/>
+                    </div>
+                    -->
+            {{#pass}}
+        {{else:}}
+            Empty box
+        {{pass}}
+    </div>
+</div>
+

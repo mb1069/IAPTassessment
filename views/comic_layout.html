@@ -66,7 +66,7 @@ middle_column = {0: mc0, 1: mc1, 2: mc2}[
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav navbar-right">
-            {{='auth' in globals() and auth.navbar('Welcome',mode='dropdown') or ''}}
+            {{='auth' in globals() and auth.navbar('Welcome',mode='dropdown', referrer_actions=['register', 'profile']) or ''}}
             </ul>
         {{if response.menu:}}
             {{=MENU(response.menu, _class='nav navbar-nav',li_class='dropdown',ul_class='dropdown-menu')}}
@@ -124,14 +124,6 @@ middle_column = {0: mc0, 1: mc1, 2: mc2}[
 <script src="{{=URL('static','js/bootstrap.min.js')}}"></script>
 <script src="{{=URL('static','js/web2py-bootstrap3.js')}}"></script>
 {{block page_js}}{{end page_js}}
-{{if response.google_analytics_id:}}
-<!-- Analytics ==================================== -->
-<script src="{{=URL('static','js/analytics.min.js')}}"></script>
-<script type="text/javascript">
-    analytics.initialize({ 'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'}
-    });
-</script>
-{{pass}}
 <!-- Share ============================y============ -->
 <script src="{{=URL('static','js/share.js',vars=dict(static=URL('static','images')))}}"></script>
 </body>

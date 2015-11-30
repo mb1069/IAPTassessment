@@ -91,6 +91,10 @@
     right: 0;
 }
 
+.comic-editing-icon{
+    margin:0.1em;
+}
+
 
 .form-field{
     clear:both;

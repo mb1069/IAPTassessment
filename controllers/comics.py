@@ -4,11 +4,26 @@ import helper
 
 
 def mycomics():
+    items_per_page = 10
+
+    if len(request.args):
+        page = int(request.args[0])
+    else:
+        page = 0
+    if len(request.args) == 2:
+        numitems = int(request.args[1])
+    else:
+        numitems = db((auth.user_id == db.comicbox.user_id) &
+                     (db.comicbox.id == db.comicbook.box_id)).count()
+
     user_comics = db((auth.user_id == db.comicbox.user_id) &
                      (db.comicbox.id == db.comicbook.box_id)).select(db.comicbook.id, db.comicbox.id,
                                                                      db.comicbox.name, db.comicbook.title,
                                                                      db.comicbook.cover, db.comicbook.issue_number,
-                                                                     db.comicbook.publisher, db.comicbook.description)
+                                                                     db.comicbook.publisher, db.comicbook.description,
+                                                                     limitby=(page * items_per_page,
+                                                                              (page + 1) * items_per_page))
+
     user_comics_id = []
     for row in user_comics:
         user_comics_id.append(row.comicbook.id)
@@ -20,7 +35,8 @@ def mycomics():
         (db.writer.id == db.comicWriter.writer_id) & (db.comicWriter.comicbook_id.belongs(user_comics_id))).select(
         db.comicWriter.comicbook_id, db.writer.name)
 
-    return {'user_comics': user_comics, 'artist_comics': artist_comics, 'writer_comics': writer_comics}
+    return {'user_comics': user_comics, 'artist_comics': artist_comics, 'writer_comics': writer_comics, 'page': page,
+            'display_next': numitems>(page+1)*items_per_page}
     # return {'user_comics': user_comics}
 
 
@@ -54,16 +70,17 @@ def comicview():
                         (db.comicWriter.writer_id == db.writer.id)).select(db.writer.name).column()
     comics_artists = db((db.comicArtist.comicbook_id == request.vars.comicbookid) &
                         (db.comicArtist.artist_id == db.artist.id)).select(db.artist.name).column()
-    return {"comicbookid": request.vars.comicbookid,
-            "box_name": data.comicbox.name,
-            "title": data.comicbook.title,
-            "cover": data.comicbook.cover,
-            "issue_number": data.comicbook.issue_number,
-            "writers": comics_writers,
-            "artists": comics_artists,
-            "description": data.comicbook.description,
-            "publisher": data.publisher.name,
-            "owns_comic": data.comicbox.user_id==auth.user_id}
+    return {'comicbookid': request.vars.comicbookid,
+            'box_name': data.comicbox.name,
+            'title': data.comicbook.title,
+            'cover': data.comicbook.cover,
+            'issue_number': data.comicbook.issue_number,
+            'writers': comics_writers,
+            'artists': comics_artists,
+            'description': data.comicbook.description,
+            'publisher': data.publisher.name,
+            'owns_comic': data.comicbox.user_id == auth.user_id}
+
 
 def comiccreate():
     # Verify comicbookid exists
@@ -75,21 +92,29 @@ def comiccreate():
     if request.vars.comicbookid is not None:
         comicdata = comicview()
 
-    defaultTitle = comicdata.get("title", "")
-    defaultCover = comicdata.get("cover", "")
-    defaultArtists = comicdata.get("artists", [])
-    defaultWriters = comicdata.get("writers", [])
-    defaultPublisher = comicdata.get("publisher", "")
-    defaultIssue_number = comicdata.get("issue_number", "")
-    defaultDescription = comicdata.get("description", "")
+    defaultTitle = comicdata.get('title', '')
+    defaultCover = comicdata.get('cover', '')
+
+    # As copied from other user, current user cannot be guaranteed to have same box
+    defaultBoxName = 'Unfiled'
+    defaultArtists = comicdata.get('artists', [])
+    defaultWriters = comicdata.get('writers', [])
+    defaultPublisher = comicdata.get('publisher', '')
+    defaultIssue_number = comicdata.get('issue_number', '')
+    defaultDescription = comicdata.get('description', '')
+
+    if request.vars.boxid is not None:
+        defaultBoxName = db(db.comicbox.id == request.vars.boxid).select(db.comicbox.name).column()[0]
 
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
+    if defaultBoxName not in user_boxes:
+        defaultBoxName = user_boxes[0]
 
     form = SQLFORM.factory(
         Field('title', type='string', default=defaultTitle, required=True, requires=IS_NOT_EMPTY()),
-        Field('box_name', type='string', required=True,
+        Field('box_name', type='string', default=defaultBoxName, required=True,
               requires=IS_IN_SET(user_boxes, zero=None)),
-        Field('cover', type='upload', default=defaultCover, uploadfolder='uploads',  requires=IS_EMPTY_OR(IS_IMAGE())),
+        Field('cover', type='upload', default=defaultCover, uploadfolder='uploads', requires=IS_EMPTY_OR(IS_IMAGE())),
         Field('artists', type='list:string', default=defaultArtists),
         Field('writers', type='list:string', default=defaultWriters),
         Field('publisher', type='string', default=defaultPublisher),
@@ -167,6 +192,5 @@ def comicedit():
 
 
 def comicdelete():
-    print request.vars.comicbookid
     db(db.comicbook.id == request.vars.comicbookid).delete()
     redirect(URL('comics', 'mycomics'))
