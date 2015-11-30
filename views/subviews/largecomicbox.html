@@ -1,22 +1,15 @@
 <div class="comicbox">
     <div class="comicbox-title">
-        {{=box.name}}  {{=box.created_on}} {{=box.count}}
+
+        <div style="float:left; font-size: 1.3em;">{{=box[0].name}} with {{=box[0].count}} comics.</div>
+            <div style="float:right; padding-right:0.5em; padding-top: 0.2em;" >
+                <a href="{{=URL('boxes', 'boxview', vars={'boxid': box[0].id})}}">See more</a>
+            </div>
     </div>
 
     <div class="comics-area">
-        {{if box.count>0:}}
-            {{=box.comicbook}}
-            {{for comic in list(box.comicbook):}}
-                {{=comic}}
-            {{pass}}
-            <!--
-                    <div class="comic-icon">
-                            <img height="130" width="100" src="=URL(r=request, c='default', f='fast_download',  args=box.comicbook[0].cover, host=True)}}"/>
-                    </div>
-                    -->
-            {{#pass}}
-        {{else:}}
-            Empty box
+        {{for comic in box[1]:}}
+            <img class="comicbox-comic-icon" height="100" width="75" src="{{=URL(r=request, c='default', f='fast_download',  args=comic.cover, host=True)}}"/>
         {{pass}}
     </div>
 </div>

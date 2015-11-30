@@ -1,23 +1,16 @@
 {{extend 'comic_layout.html'}}
-<div class="mainLeft">
+<div class="indexLeft">
     <div class="divTitle">Largest comic-boxes</div>
     {{for box in largest_boxes:}}
         {{include 'subviews/largecomicbox.html'}}
     {{pass}}
 </div>
 
-<div class="mainRight">
+<div class="indexRight">
     <div class="divTitle">Most recent comic-boxes</div>
 
-    {{#if len(recent_boxes)>0:}}
-        {{#for box in recent_boxes:}}
-            {{#include "subviews/largecomicbox.html"}}
-        {{#pass}}
-    {{#pass}}
+    {{for box in recent_boxes:}}
+        {{include 'subviews/recentcomicbox.html'}}
+    {{pass}}
 </div>
-        <div style="clear:both">
-    {{=largest_boxes[0]}}
-            </div>
-               <div style="clear:both">
-            {{=recent_boxes[0]}}
-                   </div>
+{{=recent_boxes[0]}}

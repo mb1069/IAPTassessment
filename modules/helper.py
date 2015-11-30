@@ -169,55 +169,15 @@ def concatlist(list):
         return ", ".join(list)
 
 
-def moveComicsToUnfiled(db, user_id):
+def move_comics_to_unfiled(db, user_id):
     unfiledBoxId = db((db.comicbox.name == "Unfiled") & (db.comicbox.user_id == user_id)).select(db.comicbox.id).column()[0]
     print db(db.comicbook.id>-1).select()
     db(db.comicbook.box_id==None).update(box_id=unfiledBoxId)
     print db(db.comicbook.id>-1).select()
+
 
 def re_assemble_box_with_count(box):
     re_assembled_box = box.comicbox
     re_assembled_box.count = box._extra['COUNT(comicbox.id)']
     return re_assembled_box
 
-def get_largest_boxes(db):
-    count = db.comicbox.id.count()
-    largest_boxes = db((db.comicbox.id == db.comicbook.box_id) & (db.comicbox.private == False)).select(db.comicbox.id,
-                db.comicbox.name,
-                db.comicbox.created_on,
-                count,
-                orderby=~count,
-                groupby=db.comicbox.id,
-                limitby=(
-                    0, 5))
-
-    boxes = []
-    for box in largest_boxes:
-        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title, db.comicbook.cover,
-                    db.comicbook.description, db.comicbook.issue_number,
-                    db.comicbook.publisher)
-
-        boxes.append((re_assemble_box_with_count(box), comics))
-
-    return boxes
-
-
-def get_recent_boxes(db):
-    recent_boxes = db(db.comicbox.private == False).select(
-                db.comicbox.id,
-                db.comicbox.name,
-                db.comicbox.created_on,
-                orderby=~db.comicbox.created_on,
-                limitby=(0, 5))
-
-    boxes = []
-    for box in recent_boxes:
-        print box.id
-        comics = db(db.comicbook.box_id == box.id).select(db.comicbook.title,
-                                                                   db.comicbook.cover, db.comicbook.description,
-                                                                   db.comicbook.issue_number, db.comicbook.publisher, limitby=(0,5))
-        re_assembled_box = box
-        re_assembled_box.count = len(comics)
-        boxes.append(re_assembled_box)
-
-    return boxes

@@ -48,7 +48,14 @@ if db(db.comicbox.id > 0).count() <6:
     db.comicbook.insert(box_id=9, title='Superman5', publisher=1, cover=open(cover_path))
     db.comicbook.insert(box_id=9, title='Superman5', publisher=2, cover=open(cover_path))
     db.comicbook.insert(box_id=9, title='Superman5', publisher=1, cover=open(cover_path))
-    db.comicbook.insert(box_id=9, title='Superman5', publisher=2, cover=open(cover_path))
+    db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+    db.comicbook.insert(box_id=9, title='Superman6', publisher=1, cover=open(cover_path))
+    db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+    db.comicbook.insert(box_id=9, title='Superman6', publisher=1, cover=open(cover_path))
+    db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+    db.comicbook.insert(box_id=9, title='Superman6', publisher=1, cover=open(cover_path))
+    db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+
 
     db.artist.insert(user_id=1, name='Artsy')
     db.artist.insert(user_id=1, name='Art')

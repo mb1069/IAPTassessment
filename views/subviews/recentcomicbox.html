@@ -1,0 +1,20 @@
+<div class="comicbox">
+    <div class="comicbox-title">
+
+        <div style="float:left; font-size: 1.3em;">{{=box[0].name}} created at {{=box[0].created_on}}.</div>
+            <div style="float:right; padding-right:0.5em">
+                <a href="{{=URL('boxes', 'boxview', vars={'boxid': box[0].id})}}">See more</a>
+            </div>
+    </div>
+
+    <div class="comics-area">
+        {{if len(box[1])>0:}}
+            {{for comic in box[1]:}}
+                <img class="comicbox-comic-icon" height="100" width="75" src="{{=URL(r=request, c='default', f='fast_download',  args=comic.cover, host=True)}}"/>
+            {{pass}}
+        {{else:}}
+            No Comics in this box!
+        {{pass}}
+    </div>
+</div>
+

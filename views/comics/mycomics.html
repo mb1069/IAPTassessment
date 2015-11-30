@@ -18,9 +18,6 @@
 {{else:}}
     <div>Please login to view your comics!</div>
 {{pass}}
-{{#=user_comics}}
-        {{#=writer_comics}}
-        {{#=artist_comics}}
 <script>
     $("#addComic").click(function(){
         location.href =" {{=URL('comics', 'comiccreate')}}}"

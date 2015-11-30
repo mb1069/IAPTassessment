@@ -10,7 +10,17 @@
     {{for row in box_comics:}}
             {{include 'subviews/comicbook.html'}}
     {{pass}}
-        {{include 'subviews/add_comic.html'}}
+    {{include 'subviews/add_comic.html'}}
+</div>
+<div style="width:100%; clear:both">
+        <ul class="pager">
+            {{if page!=0:}}
+                <li class="previous"><a href="{{=URL(vars={"boxid": boxdetails.id, "page":page-1})}}">Previous</a></li>
+            {{pass}}
+            {{if display_next:}}
+                <li class="next"><a href="{{=URL(vars={"boxid": boxdetails.id, "page":page+1})}}">Next</a></li>
+            {{pass}}
+        </ul>
 </div>
 {{if auth.user_id==boxdetails.user_id:}}
     <div style="clear:both">
