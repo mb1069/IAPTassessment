@@ -5,10 +5,24 @@
 
     {{pass}}
         {{include 'subviews/add_comic.html'}}
+<div style="width:100%; clear:both">
+    <ul class="pager">
+        {{if page!=0:}}
+            <li class="previous"><a href="{{=URL(args=[page-1])}}">Previous</a></li>
+        {{pass}}
+        {{if display_next:}}
+            <li class="next"><a href="{{=URL(args=[page+1])}}">Next</a></li>
+        {{pass}}
+    </ul>
+</div>
 {{else:}}
     <div>Please login to view your comics!</div>
 {{pass}}
-{{=user_comics}}
-        {{=writer_comics}}
-        {{=artist_comics}}
-
+{{#=user_comics}}
+        {{#=writer_comics}}
+        {{#=artist_comics}}
+<script>
+    $("#addComic").click(function(){
+        location.href =" {{=URL('comics', 'comiccreate')}}}"
+    });
+</script>

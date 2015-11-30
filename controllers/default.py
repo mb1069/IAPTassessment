@@ -24,8 +24,8 @@ import helper
 
 
 def index():
-    largest_boxes = get_largest_boxes(5)
-    recent_boxes = get_recent_boxes(5)
+    largest_boxes = helper.get_largest_boxes(db)
+    recent_boxes = helper.get_recent_boxes(db)
     return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes}
 
 
@@ -93,13 +93,15 @@ def search():
                           db.comicArtist.on(db.comicArtist.comicbook_id == db.comicbook.id),
                           db.artist.on(db.comicArtist.artist_id == db.artist.id)]
 
-            search_results = db(db.comicbook.id.belongs(intersected_results) & (db.comicbook.box_id == db.comicbox.id) & (db.comicbook.publisher == db.publisher.id)).select(db.comicbook.title,
-                                                                         db.comicbook.id,
-                                                                         db.comicbook.issue_number,
-                                                                         db.comicbox.name, db.comicbox.user_id,
-                                                                         db.artist.name, db.writer.name,
-                                                                         db.publisher.name,
-                                                                         left=left_joins)
+            search_results = db(
+                db.comicbook.id.belongs(intersected_results) & (db.comicbook.box_id == db.comicbox.id) & (
+                    db.comicbook.publisher == db.publisher.id)).select(db.comicbook.title,
+                                                                       db.comicbook.id,
+                                                                       db.comicbook.issue_number,
+                                                                       db.comicbox.name, db.comicbox.user_id,
+                                                                       db.artist.name, db.writer.name,
+                                                                       db.publisher.name,
+                                                                       left=left_joins)
             for row1 in search_results:
                 row1.writerNames = [row1.writer.name]
                 row1.artistNames = [row1.artist.name]
@@ -122,45 +124,6 @@ def search():
     elif form.errors:
         return form.errors
     return {'search_results': finalsearchresults, 'form2': form}
-
-
-def get_largest_boxes(num_boxes):
-    count = db.comicbox.id.count()
-    largest_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.name,
-                                                                     db.comicbox.created_on, count, orderby=~count,
-                                                                     groupby=db.comicbox.id, limitby=(0, num_boxes))
-
-    boxes = []
-    for box in largest_boxes:
-        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title, db.comicbook.cover,
-                                                                   db.comicbook.description, db.comicbook.issue_number,
-                                                                   db.comicbook.publisher)
-        boxes.append((re_assemble_box_with_count(box), comics))
-
-    return boxes
-
-
-def get_recent_boxes(num_boxes):
-    count = db.comicbox.id.count()
-    recent_boxes = db(db.comicbox.id == db.comicbook.box_id).select(db.comicbox.id, db.comicbox.name,
-                                                                    db.comicbox.created_on, count,
-                                                                    orderby=~db.comicbox.created_on,
-                                                                    groupby=db.comicbox.id, limitby=(0, num_boxes))
-    boxes = []
-    for box in recent_boxes:
-        comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title,
-                                                                   db.comicbook.cover, db.comicbook.description,
-                                                                   db.comicbook.issue_number, db.comicbook.publisher)
-        boxes.append((re_assemble_box_with_count(box), comics))
-
-    return boxes
-
-
-def re_assemble_box_with_count(box):
-    re_assembled_box = box.comicbox
-    re_assembled_box.count = box._extra['COUNT(comicbox.id)']
-    return re_assembled_box
-
 
 def error():
     return {'errormsg': request.vars.errormsg}

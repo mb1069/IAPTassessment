@@ -1,8 +1,19 @@
 {{extend 'comic_layout.html'}}
 {{if auth.is_logged_in():}}
     {{for box in user_boxes:}}
-            {{include 'subviews/comicbox.html'}}
+            {{include 'largecomicbox.html'}}
     {{pass}}
+        {{include 'subviews/add_box.html'}}
+    <div style="width:100%; clear:both">
+        <ul class="pager">
+            {{if page!=0:}}
+                <li class="previous"><a href="{{=URL(args=[page-1])}}">Previous</a></li>
+            {{pass}}
+            {{if display_next:}}
+                <li class="next"><a href="{{=URL(args=[page+1])}}">Next</a></li>
+            {{pass}}
+        </ul>
+    </div>
 {{else:}}
     <div>Please login to view your boxes & comics!</div>
 {{pass}}

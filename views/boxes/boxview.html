@@ -1,4 +1,24 @@
 {{extend 'comic_layout.html'}}
+<div class="pagetitle">
+    {{=boxdetails.name}}
+</div>
+<div style="float:left">Created on: {{=boxdetails.created_on}} </div>
 
-{{=boxid}}
-{{=boxdetails}}
+<div style="float:right">Privacy mode: {{if boxdetails.private:}} private {{else:}} public {{pass}} </div>
+
+<div style="clear:both">
+    {{for row in box_comics:}}
+            {{include 'subviews/comicbook.html'}}
+    {{pass}}
+        {{include 'subviews/add_comic.html'}}
+</div>
+{{if auth.user_id==boxdetails.user_id:}}
+    <div style="clear:both">
+        {{=form}}
+    </div>
+{{pass}}
+<script>
+    $("#addComic").click(function(){
+        location.href =" {{=URL('comics', 'comiccreate', vars={"boxid": boxdetails.id})}}"
+    });
+</script>
