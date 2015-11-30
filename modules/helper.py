@@ -160,3 +160,10 @@ def intersect(lists):
 
 def notempty(string):
     return (string != '') & (string is not None)
+
+
+def concatlist(list):
+    if list[0] is None:
+        return ""
+    else:
+        return ", ".join(list)

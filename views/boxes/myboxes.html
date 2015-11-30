@@ -1,0 +1,8 @@
+{{extend 'comic_layout.html'}}
+{{if auth.is_logged_in():}}
+    {{for box in user_boxes:}}
+            {{include 'subviews/comicbox.html'}}
+    {{pass}}
+{{else:}}
+    <div>Please login to view your boxes & comics!</div>
+{{pass}}

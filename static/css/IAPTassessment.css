@@ -102,3 +102,28 @@
 .deleteIcon{
     cursor: pointer;
 }
+
+.searchresultstable{
+    width:52em;
+    margin: 0 auto 6em;
+}
+
+
+
+table.searchresultstable tr:hover td{
+    background: #28b4e7;
+}
+
+td.first{
+    border-radius:5px 0 0 5px;
+}
+
+td.last{
+    border-radius:0 5px 5px 0;
+}
+
+.pagetitle{
+    width: 100%;
+    text-align: center;
+    font-size: 3em;
+}

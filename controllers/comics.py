@@ -24,23 +24,6 @@ def mycomics():
     # return {'user_comics': user_comics}
 
 
-def myboxes():
-    user_boxes = db(auth.user_id == db.comicbox.user_id).select(
-        db.comicbox.id,
-        db.comicbox.name,
-        db.comicbox.created_on,
-        groupby=db.comicbox.name)
-
-    boxes = []
-    for box in user_boxes:
-        comics = db(db.comicbook.box_id == box.id).select(db.comicbook.title,
-                                                          db.comicbook.cover, db.comicbook.description,
-                                                          db.comicbook.issue_number, db.comicbook.publisher)
-        box.count = len(comics)
-        boxes.append((box, comics))
-    return {'user_boxes': boxes}
-
-
 def comicview():
     # Verify comicbookid exists
     if request.vars.comicbookid is None:
@@ -82,34 +65,42 @@ def comicview():
             "publisher": data.publisher.name,
             "owns_comic": data.comicbox.user_id==auth.user_id}
 
-
-
-
 def comiccreate():
     # Verify comicbookid exists
     if auth.user_id is None:
         redirect(URL('default', 'error', vars={
             'errormsg': 'An error has occured: user is not logged in. Please login or create an account using the menu in the top right.'}))
 
+    comicdata = {}
+    if request.vars.comicbookid is not None:
+        comicdata = comicview()
+
+    defaultTitle = comicdata.get("title", "")
+    defaultCover = comicdata.get("cover", "")
+    defaultArtists = comicdata.get("artists", [])
+    defaultWriters = comicdata.get("writers", [])
+    defaultPublisher = comicdata.get("publisher", "")
+    defaultIssue_number = comicdata.get("issue_number", "")
+    defaultDescription = comicdata.get("description", "")
+
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
 
     form = SQLFORM.factory(
-        Field('title', type='string', required=True, requires=IS_NOT_EMPTY()),
+        Field('title', type='string', default=defaultTitle, required=True, requires=IS_NOT_EMPTY()),
         Field('box_name', type='string', required=True,
               requires=IS_IN_SET(user_boxes, zero=None)),
-        Field('cover', type='upload', uploadfolder='uploads',  requires=IS_IMAGE()),
-        Field('artists', type='list:string'),
-        Field('writers', type='list:string'),
-        Field('publisher', type='string'),
-        Field('issue_number', type='integer'),
-        Field('description', type='text'),
+        Field('cover', type='upload', default=defaultCover, uploadfolder='uploads',  requires=IS_EMPTY_OR(IS_IMAGE())),
+        Field('artists', type='list:string', default=defaultArtists),
+        Field('writers', type='list:string', default=defaultWriters),
+        Field('publisher', type='string', default=defaultPublisher),
+        Field('issue_number', type='integer', default=defaultIssue_number),
+        Field('description', type='text', default=defaultDescription),
         table_name='comicbook', upload=URL('uploads'))
 
     if form.process().accepted:
         helper.submit_comiccreate_form(form, db, request, auth)
-        return 'accepted'
-    elif form.errors:
-        return 'error'
+        ##TODO add confirmation message
+        redirect(URL('comics', 'mycomics'))
 
     return {'form': form}
 
@@ -151,7 +142,6 @@ def comicedit():
                         (db.comicWriter.writer_id == db.writer.id)).select(db.writer.name).column()
     comics_artists = db((db.comicArtist.comicbook_id == request.vars.comicbookid) &
                         (db.comicArtist.artist_id == db.artist.id)).select(db.artist.name).column()
-
 
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
 

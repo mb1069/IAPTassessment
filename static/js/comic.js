@@ -18,3 +18,16 @@ function deleteComic(id, comicbook_name, url, myComicsURL){
         });
     }
 }
+
+function comicHasCover(coverURL){
+    $.ajax({
+        type: 'HEAD',
+        url: coverURL,
+        success: function(){
+            return true;
+        },
+        error: function(){
+            return false;
+        }
+    });
+}

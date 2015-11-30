@@ -25,7 +25,7 @@ response.meta.generator = 'Web2py Web Framework'
 response.menu = [
     (T('Home'), False, URL('default', 'index'), []),
     (T('My comics'), True, URL('comics', 'mycomics'), []),
-    (T('My boxes'), True, URL('comics', 'myboxes'), []),
+    (T('My boxes'), True, URL('boxes', 'myboxes'), []),
     (T('Search'), True, URL('default', 'search'), [])
 ]
 
