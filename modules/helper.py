@@ -43,9 +43,18 @@ def submit_comiccreate_form(form, db, request, auth):
 
 def submit_comicedit_form(form, db, request, auth):
     fields = form.vars
-    print fields.cover
+    print "artists"
+    print fields.artists
+    if not isinstance(fields.artists, list):
+        fields.artists = [fields.artists]
+    if not isinstance(fields.writers, list):
+        fields.writers = [fields.writers]
+    fields.artists = list(set(fields.artists))
+    fields.writers = list(set(fields.writers))
+    print "artists"
+    print fields.artists
     # Updating comicbox
-    boxid = db(db.comicbox.name == fields.box_name).select(db.comicbox.id).column()[0]
+    boxid = db((db.comicbox.name == fields.box_name) & (db.comicbox.user_id==auth.user_id)).select(db.comicbox.id).column()[0]
 
     # Retrieve existing publisher_id
     publisher_id = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.publisher).column()[0]
@@ -73,7 +82,7 @@ def submit_comicedit_form(form, db, request, auth):
 
     # Retrieve list of all current comicbook writer's names
     writer_names = db((db.comicWriter.writer_id == db.writer.id) & (
-        db.comicWriter.comicbook_id == request.vars.comicbookid)).select(db.writer.name).column()
+        db.comicWriter.comicbook_id == request.vars.comicbookid)).select(db.writer.name, groupby=db.writer.name).column()
     writer_names_to_add = list(set(fields.writers).difference(writer_names))
 
     # Remove all writerComic entries for this comic
@@ -82,41 +91,43 @@ def submit_comicedit_form(form, db, request, auth):
     # Add writers
     for writer in writer_names_to_add:
         # Avoid inserting duplicates
-        if len(db((db.writer.user_id == auth.user_id) & (db.writer.name == writer)).select()) == 0:
+        if len(db((db.writer.user_id == auth.user_id) & (db.writer.name == writer)).select(groupby=db.writer.id)) == 0:
             db.writer.insert(user_id=auth.user_id, name=writer)
 
     if type(fields.writers) is str:
         fields.writers = [fields.writers]
 
-    comic_writer_ids = db(db.writer.name.belongs(fields.writers)).select(db.writer.id).column()
+    comic_writer_ids = db((db.writer.name.belongs(fields.writers)) & (db.writer.user_id == auth.user_id)).select(db.writer.id, groupby=db.writer.id).column()
 
     # Insert [comicbook_id, writer_id] pairs into comicWriter
     for writer_id in comic_writer_ids:
-        db.comicWriter.insert(comicbook_id=request.vars.comicbookid, writer_id=writer_id)
+        if len(db((db.comicWriter.writer_id==writer_id) & (db.comicWriter.comicbook_id==request.vars.comicbookid)).select())==0:
+            db.comicWriter.insert(comicbook_id=request.vars.comicbookid, writer_id=writer_id)
 
 
     # Retrieve list of all current comicbook artists's names
     artist_names = db((db.comicArtist.artist_id == db.artist.id) & (
-        db.comicArtist.comicbook_id == request.vars.comicbookid)).select(db.artist.name).column()
+        db.comicArtist.comicbook_id == request.vars.comicbookid)).select(db.artist.name, groupby=db.artist.name).column()
     artist_names_to_add = list(set(fields.artists).difference(artist_names))
 
     # Remove all artistComic entries for this comic
     db(db.comicArtist.comicbook_id == request.vars.comicbookid).delete()
-
     # Add artists
     for artist in artist_names_to_add:
         # Avoid inserting duplicates
-        if len(db((db.artist.user_id == auth.user_id) & (db.artist.name == artist)).select()) == 0:
+        if len(db((db.artist.user_id == auth.user_id) & (db.artist.name == artist)).select(groupby=db.artist.id)) == 0:
             db.artist.insert(user_id=auth.user_id, name=artist)
 
     if type(fields.artists) is str:
         fields.artists = [fields.artists]
-    comic_artist_ids = db(db.artist.name.belongs(fields.artists)).select(db.artist.id).column()
+    comic_artist_ids = db(db.artist.name.belongs(fields.artists) &  (db.artist.user_id == auth.user_id)).select(db.artist.id, groupby=db.artist.id).column()
 
 
     # Insert [comicbook_id, artist_id] pairs into comicArtist
     for artist_id in comic_artist_ids:
-        db.comicArtist.insert(comicbook_id=request.vars.comicbookid, artist_id=artist_id)
+        if len(db((db.comicArtist.artist_id==artist_id) & (db.comicArtist.comicbook_id==request.vars.comicbookid)).select())==0:
+
+            db.comicArtist.insert(comicbook_id=request.vars.comicbookid, artist_id=artist_id)
 
     cleanup_tables(db)
 
