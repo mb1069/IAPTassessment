@@ -84,7 +84,7 @@ def submit_comicedit_form(form, db, request, auth):
             # If no publisher with name/user_id, create a new one
             publisher_id = db.publisher.insert(user_id=auth.user, name=request.vars.publisher)
 
-    if (fields.cover is "") | (fields.cover is None):
+    if ((fields.cover is "") | (fields.cover is None)) & (not fields.remove_existing_cover):
         previous_cover = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.cover)[0].cover
         fields.cover = previous_cover
 
