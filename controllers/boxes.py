@@ -2,7 +2,6 @@ import helper
 
 
 def boxview():
-    print request.vars
     # Deal with non-existent Ids
     if len(db(db.comicbox.id == request.vars.boxid).select(db.comicbox.id)) == 0:
         session.flash = 'Box ID does not exist!'
@@ -16,7 +15,7 @@ def boxview():
 
     items_per_page = 5
 
-    if len(request.vars):
+    if request.vars.page is not None:
         page = int(request.vars.page)
     else:
         page = 0
@@ -73,7 +72,7 @@ def boxcreate():
 
 
 def myboxes():
-    items_per_page = 5
+    items_per_page = 10
 
     if len(request.args):
         page = int(request.args[0])
@@ -83,7 +82,6 @@ def myboxes():
         numitems = int(request.args[1])
     else:
         numitems = db(auth.user_id == db.comicbox.user_id).count()
-
 
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(
         db.comicbox.id,

@@ -93,8 +93,8 @@ def comiccreate():
         comicdata = comicview()
 
     defaultTitle = comicdata.get('title', '')
-    defaultCover = comicdata.get('cover', '')
-
+    # todo Copy cover from other comicbook
+    # defaultCover = comicdata.get('cover', '')
     # As copied from other user, current user cannot be guaranteed to have same box
     defaultBoxName = 'Unfiled'
     defaultArtists = comicdata.get('artists', [])
@@ -114,17 +114,17 @@ def comiccreate():
         Field('title', type='string', default=defaultTitle, required=True, requires=IS_NOT_EMPTY()),
         Field('box_name', type='string', default=defaultBoxName, required=True,
               requires=IS_IN_SET(user_boxes, zero=None)),
-        Field('cover', type='upload', default=defaultCover, uploadfolder='uploads', requires=IS_EMPTY_OR(IS_IMAGE())),
+        Field('cover', type='upload', uploadfolder='uploads', requires=IS_EMPTY_OR(IS_IMAGE())),
         Field('artists', type='list:string', default=defaultArtists),
         Field('writers', type='list:string', default=defaultWriters),
         Field('publisher', type='string', default=defaultPublisher),
-        Field('issue_number', type='integer', default=defaultIssue_number),
+        Field('issue_number', type='string', default=defaultIssue_number),
         Field('description', type='text', default=defaultDescription),
         table_name='comicbook', upload=URL('uploads'))
 
     if form.process().accepted:
         helper.submit_comiccreate_form(form, db, request, auth)
-        ##TODO add confirmation message
+        session.flash = 'Created comic!'
         redirect(URL('comics', 'mycomics'))
 
     return {'form': form}

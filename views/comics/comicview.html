@@ -7,26 +7,31 @@
 <img height="400" width="300" src="{{=URL(r=request, c='default', f='fast_download',  args=cover, host=True)}}"/>
 </div>
 
-<div style="float:left; ">
-<p>{{=cover}}</p>
-<p>{{=issue_number}}</p>
-    Writers
-    <ul>
-{{for writer in writers:}}
-    <li>{{=writer}}</li>
-    {{pass}}
-  </ul>
+<div style="padding-left:1em; float:left; ">
+<p>Issue number: {{=issue_number}}</p>
+{{if len(writers)>0:}}
+    <p>
+        Writers:
+        <ul>
+        {{for writer in writers:}}
+            <li>{{=writer}}</li>
+        {{pass}}
+      </ul>
+    </p>
+{{pass}}
+{{if len(artists)>0:}}
+    <p>
+        Artists:
+        <ul>
+        {{for artist in artists:}}
+            <li>{{=artist}}</li>
+        {{pass}}
+        </ul>
+    </p>
+{{pass}}
 
-        Artists
-<ul>
-{{for artist in artists:}}
-    <li>{{=artist}}</li>
-    {{pass}}
-</ul>
-
-<p>{{=description}}</p>
-<p>{{=publisher}}</p>
-<p>{{=title}}</p>
+<p>Published by {{=publisher}}</p>
+<p>{{=description if description is not None else ''}}</p>
 {{if owns_comic:}}
 <a href="{{=URL('comics', 'comicedit', vars={'comicbookid': comicbookid})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="40px" width="40px"/></a>
 <img class="deleteIcon" onclick="deleteComic('{{=comicbookid}}', '{{=title}}', '{{=URL('comics', 'comicdelete')}}', '{{=URL('comics', 'mycomics')}}')" src="{{=URL('static', 'images', args='delete.png')}}" height="40px" width="40px"/>

@@ -116,7 +116,7 @@ db.define_table('comicbook',
                 Field('box_id', 'reference comicbox', required=True, ondelete='SET NULL'),
                 Field('title', type='string', required=True),
                 Field('cover', type='upload', uploadfield=True, autodelete=True),
-                Field('issue_number', type='integer'),
+                Field('issue_number', type='string'),
                 Field('publisher', 'reference publisher'),
                 Field('description', type='text'))
 

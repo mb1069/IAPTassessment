@@ -1,8 +1,11 @@
 {{extend 'comic_layout.html'}}
 {{if auth.is_logged_in():}}
-    {{for box in user_boxes:}}
-            {{include 'subviews/largecomicbox.html'}}
-    {{pass}}
+    <div id="myboxes">
+        {{for box in user_boxes:}}
+                {{include 'subviews/largecomicbox.html'}}
+        {{pass}}
+
+    </div>
         {{include 'subviews/add_box.html'}}
     <div style="width:100%; clear:both">
         <ul class="pager">
@@ -17,3 +20,11 @@
 {{else:}}
     <div>Please login to view your boxes & comics!</div>
 {{pass}}
+
+<script>
+    console.log("a");
+    $("#addBox").click(function(){
+        location.href =" {{=URL('boxes', 'boxcreate')}}}"
+    });
+     console.log("a");
+</script>
