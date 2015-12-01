@@ -169,7 +169,9 @@ def comicedit():
                         (db.comicArtist.artist_id == db.artist.id)).select(db.artist.name).column()
 
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
-
+    print 'a'
+    print len(comics_writers)
+    print comics_writers
     form = SQLFORM.factory(
         Field('title', type='string', default=comicbook.title, required=True, requires=IS_NOT_EMPTY()),
         Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name,
@@ -185,7 +187,7 @@ def comicedit():
 
     if form.process().accepted:
         helper.submit_comicedit_form(form, db, request, auth)
-        # TODO add confirmation of success message
+        session.flash = 'Sucessfully edited comic!'
         redirect(URL('comics', 'mycomics'))
 
     return {'form': form}
@@ -193,4 +195,5 @@ def comicedit():
 
 def comicdelete():
     db(db.comicbook.id == request.vars.comicbookid).delete()
+    session.flash = "Deleted comic!"
     redirect(URL('comics', 'mycomics'))

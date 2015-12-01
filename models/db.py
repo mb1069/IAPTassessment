@@ -115,7 +115,7 @@ db.define_table('comicbook',
                 # DO NOT CASCADE ON DELETE as comics reassigned to user's Unfiled box
                 Field('box_id', 'reference comicbox', required=True, ondelete='SET NULL'),
                 Field('title', type='string', required=True),
-                Field('cover', type='upload', uploadfield=True, autodelete=True),
+                Field('cover', type='upload', uploadfield=True, autodelete=True, requires=IS_EMPTY_OR(IS_IMAGE(extensions=('jpeg', 'png'), minsize=(300,400)))),
                 Field('issue_number', type='string'),
                 Field('publisher', 'reference publisher'),
                 Field('description', type='text'))
@@ -134,7 +134,7 @@ db.define_table('comicWriter',
 
 # artist_table
 db.define_table('artist',
-                Field('user_id', 'reference auth_user', required=True),
+                Field('user_id', 'reference auth_user', required=True, ondelete='CASCADE'),
                 Field('name', type='string', required=True))
 
 
