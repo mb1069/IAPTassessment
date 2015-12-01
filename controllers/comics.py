@@ -1,4 +1,5 @@
-__author__ = 'miguel'
+# Exam Candidate Number Y0076159
+
 
 import helper
 import os
@@ -116,9 +117,8 @@ def comiccreate():
         Field('box_name', type='string', default=defaultBoxName, required=True,
               requires=IS_IN_SET(user_boxes, zero=None)),
         Field('cover', type='upload', uploadfolder=os.path.join(request.folder,'uploads')),
-        Field('artists', type='list:string', default=defaultArtists),
-        Field('writers', type='list:string', default=defaultWriters),
-        Field('publisher', type='string', default=defaultPublisher),
+        Field('artists', type='list:string', requires=IS_NOT_EMPTY()),
+        Field('writers', type='list:string', requires=IS_NOT_EMPTY()),        Field('publisher', type='string', default=defaultPublisher),
         Field('issue_number', type='string', default=defaultIssue_number),
         Field('description', type='text', default=defaultDescription),
         table_name='comicbook', upload=URL('uploads'))
@@ -177,8 +177,8 @@ def comicedit():
         Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name,
               requires=IS_IN_SET(user_boxes, zero=None)),
         Field('cover', type='upload', label='Cover max 400h * 300w px', uploadfolder=os.path.join(request.folder,'uploads'), requires=IS_EMPTY_OR(IS_IMAGE(maxsize=(300,400)))),
-        Field('artists', type='list:string', default=comics_artists),
-        Field('writers', type='list:string', default=comics_writers),
+        Field('artists', type='list:string', default=comics_artists, requires=IS_NOT_EMPTY()),
+        Field('writers', type='list:string', default=comics_writers, requires=IS_NOT_EMPTY()),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
         Field('update_all', type='boolean', default=False,
               label='Update the publisher of all of your comics with the same publisher.'),

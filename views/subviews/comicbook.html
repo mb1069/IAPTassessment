@@ -1,3 +1,4 @@
+<!--Exam candidate number: Y0076159-->
 {{if len(row.comicbook.cover)>0:}}
     <div id = "{{=row.comicbook.id}}" class="comic" style="background-image: url({{=URL(r=request, c='default', f='fast_download',  args=row.comicbook.cover, host=True)}});">
 {{else:}}
