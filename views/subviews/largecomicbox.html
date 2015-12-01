@@ -6,7 +6,7 @@
             {{=box[0].name}} with {{=box[0].count}} comics.
         </div>
             <div style="float:right; padding-top: 0.15em; padding-right:1em" >
-                <a href="{{=URL('boxes', 'boxview', vars={'boxid': box[0].id})}}">See more</a>
+                <a href="{{=URL('boxes', 'boxview', vars={'boxid': box[0].id})}}"><img src="{{=URL('static', 'images', args='view.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a>
             </div>
     </div>
 
