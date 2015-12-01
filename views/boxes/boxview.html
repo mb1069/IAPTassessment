@@ -10,7 +10,9 @@
     {{for row in box_comics:}}
             {{include 'subviews/comicbook.html'}}
     {{pass}}
-    {{include 'subviews/add_comic.html'}}
+    {{if auth.user_id==boxdetails.user_id:}}
+        {{include 'subviews/add_comic.html'}}
+    {{pass}}
 </div>
 <div style="width:100%; clear:both">
         <ul class="pager">
