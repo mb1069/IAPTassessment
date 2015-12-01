@@ -138,7 +138,6 @@ def submit_comicedit_form(form, db, request, auth):
         fields.artists = [fields.artists]
     comic_artist_ids = db(db.artist.name.belongs(fields.artists) &  (db.artist.user_id == auth.user_id)).select(db.artist.id, groupby=db.artist.id).column()
 
-
     # Insert [comicbook_id, artist_id] pairs into comicArtist
     for artist_id in comic_artist_ids:
         if len(db((db.comicArtist.artist_id==artist_id) & (db.comicArtist.comicbook_id==request.vars.comicbookid)).select())==0:
