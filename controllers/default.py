@@ -25,54 +25,60 @@ import time
 import helper
 
 
+# Front page
 def index():
     largest_boxes = get_largest_boxes(db)
     recent_boxes = get_recent_boxes(db)
     return {'largest_boxes': largest_boxes, 'recent_boxes': recent_boxes}
 
 
+# Helper methods, would be in modules/helper.py but would require apache server restart to correctly reload
 def get_largest_boxes(db):
     count = db.comicbox.id.count()
     largest_boxes = db((db.comicbox.id == db.comicbook.box_id) & (db.comicbox.private == False)).select(
-                db.comicbox.id,
-                db.comicbox.name,
-                db.comicbox.user_id,
-                count,
-                orderby=~count,
-                groupby=db.comicbox.id,
-                limitby=(
-                    0, 5))
+        db.comicbox.id,
+        db.comicbox.name,
+        db.comicbox.user_id,
+        count,
+        orderby=~count,
+        groupby=db.comicbox.id,
+        limitby=(
+            0, 5))
 
     boxes = []
     for box in largest_boxes:
         box.id = box.comicbox.id
         comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title, db.comicbook.cover,
-                    db.comicbook.description, db.comicbook.issue_number,
-                    db.comicbook.publisher, limitby=(0, 12))
+                                                                   db.comicbook.description, db.comicbook.issue_number,
+                                                                   db.comicbook.publisher, limitby=(0, 12))
 
         boxes.append((helper.re_assemble_box_with_count(box), comics))
 
     return boxes
 
 
+# Helper methods, would be in modules/helper.py but would require apache server restart to correctly reload
 def get_recent_boxes(db):
     recent_boxes = db(db.comicbox.private == False).select(
-                db.comicbox.id,
-                db.comicbox.name,
-                db.comicbox.created_on,
-                orderby=~db.comicbox.created_on,
-                limitby=(0, 5))
+        db.comicbox.id,
+        db.comicbox.name,
+        db.comicbox.created_on,
+        orderby=~db.comicbox.created_on,
+        limitby=(0, 5))
 
     boxes = []
     for box in recent_boxes:
         comics = db(db.comicbook.box_id == box.id).select(db.comicbook.title,
-                                                                   db.comicbook.cover, db.comicbook.description,
-                                                                   db.comicbook.issue_number, db.comicbook.publisher, limitby=(0,5))
+                                                          db.comicbook.cover, db.comicbook.description,
+                                                          db.comicbook.issue_number, db.comicbook.publisher,
+                                                          limitby=(0, 5))
         boxes.append((box, comics))
 
     return boxes
 
 
+# View for searching items in the database, works by intersecting
+# sets of comicbookid based on searches of individual fields
 def search():
     form = SQLFORM.factory(
         Field('keyword', type='string'),
@@ -88,8 +94,8 @@ def search():
 
         if helper.notempty(fields.keyword):
             # Search all fields and intersect
-            keyword_results = db(db.comicbook.title.like('%' + fields.keyword + '%')).select(db.comicbook.id, groupby=db.comicbook.id).column(
-                db.comicbook.id)
+            keyword_results = db(db.comicbook.title.like('%' + fields.keyword + '%')).select(db.comicbook.id,
+                                   groupby=db.comicbook.id).column(db.comicbook.id)
 
             keyword_results.extend(db((db.publisher.name.like('%' + fields.keyword + '%'))
                                       & (db.comicbook.publisher == db.publisher.id)) \
@@ -102,13 +108,15 @@ def search():
 
             keyword_results.extend(db(db.artist.name.like('%' + fields.keyword + '%') &
                                       (db.comicArtist.artist_id == db.artist.id) &
-                                      (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                                      (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id,
+                                                                                               groupby=db.comicbook.id).column(
                 db.comicbook.id))
             field_results.append(keyword_results)
 
         if helper.notempty(fields.title):
             field_results.append(
-                db(db.comicbook.title.like('%' + fields.title + '%')).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                db(db.comicbook.title.like('%' + fields.title + '%')).select(db.comicbook.id,
+                                                                             groupby=db.comicbook.id).column(
                     db.comicbook.id))
 
         if helper.notempty(fields.publisher):
@@ -120,13 +128,15 @@ def search():
         if helper.notempty(fields.writer):
             field_results.append(db(db.writer.name.like('%' + fields.writer + '%') &
                                     (db.comicWriter.writer_id == db.writer.id) &
-                                    (db.comicbook.id == db.comicWriter.comicbook_id)).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                                    (db.comicbook.id == db.comicWriter.comicbook_id)).select(db.comicbook.id,
+                                                                                             groupby=db.comicbook.id).column(
                 db.comicbook.id))
 
         if helper.notempty(fields.artist):
             field_results.append(db(db.artist.name.like('%' + fields.artist + '%') &
                                     (db.comicArtist.artist_id == db.artist.id) &
-                                    (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                                    (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id,
+                                                                                             groupby=db.comicbook.id).column(
                 db.comicbook.id))
 
         if len(field_results) > 0:
@@ -169,6 +179,7 @@ def search():
         return form.errors
     return {'search_results': finalsearchresults, 'form': form}
 
+
 def error():
     return {'errormsg': request.vars.errormsg}
 
@@ -200,7 +211,7 @@ def download():
     """
     return response.download(request, db)
 
-
+# Method to speed up download time of comicbook covers
 def fast_download():
     # very basic security (only allow fast_download on db.comicbook.cover):
     if not request.args(0).startswith("db.comicbook.cover"):

@@ -1,7 +1,7 @@
 import os, shutil
 
 
-
+# Remove duplicates and None from field to avoid commiting errors to the database
 def cleanupArtistsAndWritersFields(fields):
     if not isinstance(fields.artists, list):
         fields.artists = [fields.artists]
@@ -15,10 +15,7 @@ def cleanupArtistsAndWritersFields(fields):
     fields.writers = filter(None, fields.writers)
     return fields
 
-
-
-
-
+# Delete redundant data from database
 def cleanup_tables(db):
     cleanup_artists(db)
     cleanup_publishers(db)
@@ -49,6 +46,7 @@ def cleanup_artists(db):
     db(db.artist.id.belongs(artists_w_no_comics)).delete()
 
 
+# List intersection
 def intersect(lists):
     s = set(lists[0])
     for l in lists:
@@ -56,10 +54,12 @@ def intersect(lists):
     return list(s)
 
 
+# check if string is not None and not empty
 def notempty(string):
     return (string != '') & (string is not None)
 
 
+# concatenate lists
 def concatlist(list):
     if list[0] is None:
         return ""
@@ -67,11 +67,13 @@ def concatlist(list):
         return ", ".join(list)
 
 
+# Re-allocate hanging comics to unfiled box
 def move_comics_to_unfiled(db, user_id):
     unfiledBoxId = db((db.comicbox.name == "Unfiled") & (db.comicbox.user_id == user_id)).select(db.comicbox.id).column()[0]
     db(db.comicbook.box_id==None).update(box_id=unfiledBoxId)
 
 
+# Re-package rows object for syntactic sugar
 def re_assemble_box_with_count(box):
     re_assembled_box = box.comicbox
     re_assembled_box.count = box._extra['COUNT(comicbox.id)']
