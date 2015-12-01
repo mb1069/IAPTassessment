@@ -80,52 +80,52 @@ def search():
         Field('publisher', type='string'),
         Field('keyword', type='string'))
     finalsearchresults = []
-    if form.process().accepted:
+    if form.process(keepvalues=True).accepted:
         fields = form.vars
         field_results = []
 
         if helper.notempty(fields.keyword):
             # Search all fields and intersect
-            keyword_results = db(db.comicbook.title.like('%' + fields.keyword + '%')).select(db.comicbook.id).column(
+            keyword_results = db(db.comicbook.title.like('%' + fields.keyword + '%')).select(db.comicbook.id, groupby=db.comicbook.id).column(
                 db.comicbook.id)
 
             keyword_results.extend(db((db.publisher.name.like('%' + fields.keyword + '%'))
                                       & (db.comicbook.publisher == db.publisher.id)) \
-                                   .select(db.comicbook.id).column(db.comicbook.id))
+                                   .select(db.comicbook.id, groupby=db.comicbook.id).column(db.comicbook.id))
 
             keyword_results.extend(db(db.writer.name.like('%' + fields.keyword + '%') &
                                       (db.comicWriter.writer_id == db.writer.id) &
                                       (db.comicbook.id == db.comicWriter.comicbook_id))
-                                   .select(db.comicbook.id).column(db.comicbook.id))
+                                   .select(db.comicbook.id, groupby=db.comicbook.id).column(db.comicbook.id))
 
             keyword_results.extend(db(db.artist.name.like('%' + fields.keyword + '%') &
                                       (db.comicArtist.artist_id == db.artist.id) &
-                                      (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id).column(
+                                      (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id, groupby=db.comicbook.id).column(
                 db.comicbook.id))
             field_results.append(keyword_results)
 
         if helper.notempty(fields.title):
             field_results.append(
                 db(db.comicbook.title.like('%' + fields.title + '%')).select(db.comicbook.id).column(
-                    db.comicbook.id))
+                    db.comicbook.id, groupby=db.comicbook.id))
 
         if helper.notempty(fields.publisher):
             field_results.append(
                 db((db.publisher.name.like('%' + fields.publisher + '%')) & (
                     db.comicbook.publisher == db.publisher.id)).select(db.comicbook.id).column(
-                    db.comicbook.id))
+                    db.comicbook.id, groupby=db.comicbook.id))
 
         if helper.notempty(fields.writer):
             field_results.append(db(db.writer.name.like('%' + fields.writer + '%') &
                                     (db.comicWriter.writer_id == db.writer.id) &
                                     (db.comicbook.id == db.comicWriter.comicbook_id)).select(db.comicbook.id).column(
-                db.comicbook.id))
+                db.comicbook.id, groupby=db.comicbook.id))
 
         if helper.notempty(fields.artist):
             field_results.append(db(db.artist.name.like('%' + fields.artist + '%') &
                                     (db.comicArtist.artist_id == db.artist.id) &
                                     (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id).column(
-                db.comicbook.id))
+                db.comicbook.id, groupby=db.comicbook.id))
 
         if len(field_results) > 0:
             intersected_results = helper.intersect(field_results)
@@ -143,7 +143,7 @@ def search():
                                                                        db.comicbox.name, db.comicbox.user_id,
                                                                        db.artist.name, db.writer.name,
                                                                        db.publisher.name,
-                                                                       left=left_joins)
+                                                                       left=left_joins, groupby=db.comicbook.id)
             for row1 in search_results:
                 row1.writerNames = [row1.writer.name]
                 row1.artistNames = [row1.artist.name]

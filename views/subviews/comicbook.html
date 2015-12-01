@@ -13,19 +13,23 @@
             </div>
             <div class="comicwriter" style="float:left; clear:both">
                 Writers:
+                <ul>
             {{for writer_row in writer_comics: }}
                 {{if writer_row.comicWriter.comicbook_id==row.comicbook.id: }}
-                    {{=writer_row.writer.name}}
+                    <li>{{=writer_row.writer.name}}</li>
                 {{pass}}
             {{pass}}
+                </ul>
             </div>
             <div class="comicwriter" style="float:left; clear:both">
                 Artists:
+                <ul>
             {{for artist_row in artist_comics: }}
                 {{if artist_row.comicArtist.comicbook_id==row.comicbook.id: }}
-                    {{=artist_row.artist.name}}
+                    <li>{{=artist_row.artist.name}}</li>
                 {{pass}}
             {{pass}}
+                </ul>
             </div>
             <div class="comic-editing">
                 <a href="{{=URL('comics', 'comicview', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='view.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a>

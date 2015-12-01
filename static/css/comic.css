@@ -78,6 +78,7 @@
     transition: opacity 0.3s ease-in-out, background 0.3s ease-in-out;
     background: rgba(255,255,255,0);
     padding: 0.5em;
+    overflow: hidden;
 }
 
 /*background-image: url({{=URL('download', args=row.comicbook.cover, host=True)}});*/
@@ -111,7 +112,7 @@
 }
 
 .searchresultstable{
-    width:52em;
+    width:75em;
     margin: 0 auto 6em;
 }
 
