@@ -1,7 +1,7 @@
 __author__ = 'miguel'
 
 import helper
-
+import os
 
 def mycomics():
     items_per_page = 10
@@ -114,7 +114,7 @@ def comiccreate():
         Field('title', type='string', default=defaultTitle, required=True, requires=IS_NOT_EMPTY()),
         Field('box_name', type='string', default=defaultBoxName, required=True,
               requires=IS_IN_SET(user_boxes, zero=None)),
-        Field('cover', type='upload', uploadfolder='uploads', requires=IS_EMPTY_OR(IS_IMAGE())),
+        Field('cover', type='upload', uploadfolder=os.path.join(request.folder,'uploads')),
         Field('artists', type='list:string', default=defaultArtists),
         Field('writers', type='list:string', default=defaultWriters),
         Field('publisher', type='string', default=defaultPublisher),
@@ -156,6 +156,7 @@ def comicedit():
 
     comic_details = db((db.comicbook.id == request.vars.comicbookid) & (db.comicbook.box_id == db.comicbox.id)).select(
         db.comicbook.title, db.comicbook.id,
+        db.comicbook.cover,
         db.comicbook.issue_number,
         db.comicbox.name,
         db.comicbook.description,
@@ -169,17 +170,14 @@ def comicedit():
                         (db.comicArtist.artist_id == db.artist.id)).select(db.artist.name).column()
 
     user_boxes = db(auth.user_id == db.comicbox.user_id).select(db.comicbox.name).column()
-    print 'a'
-    print len(comics_writers)
-    print comics_writers
+
     form = SQLFORM.factory(
         Field('title', type='string', default=comicbook.title, required=True, requires=IS_NOT_EMPTY()),
         Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name,
               requires=IS_IN_SET(user_boxes, zero=None)),
-        #Todo fix permissions on uploads folder?
-        Field('cover', type='upload', uploadfolder=URL('uploads'), requires=IS_EMPTY_OR(IS_IMAGE(extensions=('jpeg', 'png', 'jpg'), minsize=(300,400)))),
-        Field('artists', type='list:string', default=comics_artists, requires=IS_NOT_EMPTY()),
-        Field('writers', type='list:string', default=comics_writers, requires=IS_NOT_EMPTY()),
+        Field('cover', type='upload', uploadfolder=os.path.join(request.folder,'uploads'), requires=IS_EMPTY_OR(IS_IMAGE(maxsize=(300,400)))),
+        Field('artists', type='list:string', default=comics_artists),
+        Field('writers', type='list:string', default=comics_writers),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
         Field('update_all', type='boolean', default=False,
               label='Update the publisher of all of your comics with the same publisher.'),

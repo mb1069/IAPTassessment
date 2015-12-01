@@ -110,20 +110,25 @@ db.define_table('publisher',
 # Ensure [user_id. name] pairs are unique to avoid users having multiple publishers with the same name
 db.publisher.name.requires = IS_NOT_IN_DB(db(db.publisher.user_id == request.vars.user), 'publisher.name')
 
+import os
+
+
 # comic table
 db.define_table('comicbook',
                 # DO NOT CASCADE ON DELETE as comics reassigned to user's Unfiled box
                 Field('box_id', 'reference comicbox', required=True, ondelete='SET NULL'),
                 Field('title', type='string', required=True),
-                Field('cover', type='upload', uploadfield=True, autodelete=True, requires=IS_EMPTY_OR(IS_IMAGE(extensions=('jpeg', 'png'), minsize=(300,400)))),
+                Field('cover', type='upload', uploadfield=True, uploadfolder=os.path.join(request.folder,'uploads'), autodelete=True, requires=IS_EMPTY_OR(IS_IMAGE(maxsize=(300,400)))),
                 Field('issue_number', type='string'),
                 Field('publisher', 'reference publisher'),
                 Field('description', type='text'))
 
+db.comicbook.cover.default = os.path.join(request.folder, 'static', 'comic_cover_placeholder.png')
+
 # writertable
 db.define_table('writer',
                 Field('user_id', 'reference auth_user', required=True, ondelete='CASCADE'),
-                Field('name', type='string', required=True))
+                Field('name', type='string', required=True, requires=IS_NOT_EMPTY()))
 
 
 # comic_writer table
@@ -135,7 +140,7 @@ db.define_table('comicWriter',
 # artist_table
 db.define_table('artist',
                 Field('user_id', 'reference auth_user', required=True, ondelete='CASCADE'),
-                Field('name', type='string', required=True))
+                Field('name', type='string', required=True, requires=IS_NOT_EMPTY()))
 
 
 # artist_writer table

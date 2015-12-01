@@ -2,7 +2,7 @@ import os, shutil
 
 
 def submit_comiccreate_form(form, db, request, auth):
-    fields = form.vars
+    fields = cleanupArtistsAndWritersFields(form.vars)
     # Publisher
     # If publisher already exists, get reference
     p = db((db.publisher.name == fields.publisher) & (db.publisher.user_id == auth.user_id)).select(
@@ -13,12 +13,16 @@ def submit_comiccreate_form(form, db, request, auth):
         publisher_id = db.publisher.insert(user_id=auth.user_id, name=fields.publisher)
 
     # Insert comic
-    boxid = db(db.comicbox.name == fields.box_name).select(db.comicbox.id).column()[0]
-    print 'cover: ' + fields.cover
+    boxid = db((db.comicbox.name == fields.box_name) & (db.comicbox.user_id==auth.user_id)).select(db.comicbox.id).column()[0]
 
     # TODO fix cover not uploading properly
     comicbook_id = db.comicbook.insert(box_id=boxid, title=fields.title, cover=fields.cover,
                                        issue_number=fields.issue_number, publisher=publisher_id)
+
+    # Remove any empty strings in artists
+    fields.artists = filter(None, fields.artists)
+    fields.writers = filter(None, fields.writers)
+
     artist_id = []
     for art in fields.artists:
         a = db((db.artist.name == art) & (db.artist.user_id == auth.user_id)).select(db.artist.id).column()
@@ -41,14 +45,22 @@ def submit_comiccreate_form(form, db, request, auth):
         db.comicWriter.insert(comicbook_id=comicbook_id, writer_id=a_id)
 
 
-def submit_comicedit_form(form, db, request, auth):
-    fields = form.vars
+def cleanupArtistsAndWritersFields(fields):
     if not isinstance(fields.artists, list):
         fields.artists = [fields.artists]
     if not isinstance(fields.writers, list):
         fields.writers = [fields.writers]
     fields.artists = list(set(fields.artists))
     fields.writers = list(set(fields.writers))
+
+    # Remove any empty strings in artists
+    fields.artists = filter(None, fields.artists)
+    fields.writers = filter(None, fields.writers)
+    return fields
+
+
+def submit_comicedit_form(form, db, request, auth):
+    fields = cleanupArtistsAndWritersFields(form.vars)
 
     # Updating comicbox
     boxid = db((db.comicbox.name == fields.box_name) & (db.comicbox.user_id==auth.user_id)).select(db.comicbox.id).column()[0]
@@ -179,9 +191,7 @@ def concatlist(list):
 
 def move_comics_to_unfiled(db, user_id):
     unfiledBoxId = db((db.comicbox.name == "Unfiled") & (db.comicbox.user_id == user_id)).select(db.comicbox.id).column()[0]
-    print db(db.comicbook.id>-1).select()
     db(db.comicbook.box_id==None).update(box_id=unfiledBoxId)
-    print db(db.comicbook.id>-1).select()
 
 
 def re_assemble_box_with_count(box):

@@ -46,7 +46,7 @@ def get_largest_boxes(db):
         box.id = box.comicbox.id
         comics = db(db.comicbook.box_id == box.comicbox.id).select(db.comicbook.title, db.comicbook.cover,
                     db.comicbook.description, db.comicbook.issue_number,
-                    db.comicbook.publisher, limitby=(0, 10))
+                    db.comicbook.publisher, limitby=(0, 12))
 
         boxes.append((helper.re_assemble_box_with_count(box), comics))
 

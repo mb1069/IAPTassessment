@@ -8,7 +8,9 @@
 </div>
 
 <div style="padding-left:1em; float:left; ">
-<p>Issue number: {{=issue_number}}</p>
+{{if (issue_number is not None) & len(issue_number)>0:}}
+    <p>Issue number: {{=issue_number}}</p>
+{{pass}}
 {{if len(writers)>0:}}
     <p>
         Writers:
@@ -29,9 +31,16 @@
         </ul>
     </p>
 {{pass}}
-
-<p>Published by {{=publisher}}</p>
-<p>{{=description if description is not None else ''}}</p>
+{{if publisher is not None:}}
+    {{if len(publisher)>0:}}
+        <p>Published by {{=publisher}}</p>
+    {{pass}}
+{{pass}}
+{{if description is not None:}}
+    {{if len(description)>0:}}
+        <p>{{=description}}</p>
+    {{pass}}
+{{pass}}
 {{if owns_comic:}}
 <a href="{{=URL('comics', 'comicedit', vars={'comicbookid': comicbookid})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="40px" width="40px"/></a>
 <img class="deleteIcon" onclick="deleteComic('{{=comicbookid}}', '{{=title}}', '{{=URL('comics', 'comicdelete')}}', '{{=URL('comics', 'mycomics')}}')" src="{{=URL('static', 'images', args='delete.png')}}" height="40px" width="40px"/>

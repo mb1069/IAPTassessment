@@ -4,32 +4,34 @@
     <div id = "{{=row.comicbook.id}}" class="comic" style="background-image: url({{=URL('static', 'images', args='comic_cover_placeholder.png')}});">
 {{pass}}
         <div class="hovertext">
-            <div class="comictitle">
-            {{if (not row.comicbook.publisher) & (row.comicbook.publisher is not None):}}
-                {{=row.comicbook.publisher}}'s <br> {{=row.comicbook.title}}
-            {{else:}}
-                {{=row.comicbook.title}}
-            {{pass}}
-            </div>
-            <div class="comicwriter" style="float:left; clear:both">
-                Writers:
-                <ul>
-            {{for writer_row in writer_comics: }}
-                {{if writer_row.comicWriter.comicbook_id==row.comicbook.id: }}
-                    <li>{{=writer_row.writer.name}}</li>
+            <div style="position: relative; top: 0; width: 100%; overflow: hidden; height: 93%;">
+                <div class="comictitle">
+                {{if (not row.comicbook.publisher) & (row.comicbook.publisher is not None):}}
+                    {{=row.comicbook.publisher}}'s <br> {{=row.comicbook.title}}
+                {{else:}}
+                    {{=row.comicbook.title}}
                 {{pass}}
-            {{pass}}
-                </ul>
-            </div>
-            <div class="comicwriter" style="float:left; clear:both">
-                Artists:
-                <ul>
-            {{for artist_row in artist_comics: }}
-                {{if artist_row.comicArtist.comicbook_id==row.comicbook.id: }}
-                    <li>{{=artist_row.artist.name}}</li>
+                </div>
+                <div class="comicwriter" style="float:left; clear:both">
+                    Writers:
+                    <ul>
+                {{for writer_row in writer_comics: }}
+                    {{if writer_row.comicWriter.comicbook_id==row.comicbook.id: }}
+                        <li>{{=writer_row.writer.name}}</li>
+                    {{pass}}
                 {{pass}}
-            {{pass}}
-                </ul>
+                    </ul>
+                </div>
+                <div class="comicwriter" style="float:left; clear:both">
+                    Artists:
+                    <ul>
+                {{for artist_row in artist_comics: }}
+                    {{if artist_row.comicArtist.comicbook_id==row.comicbook.id: }}
+                        <li>{{=artist_row.artist.name}}</li>
+                    {{pass}}
+                {{pass}}
+                    </ul>
+                </div>
             </div>
             <div class="comic-editing">
                 <a href="{{=URL('comics', 'comicview', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='view.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a>
