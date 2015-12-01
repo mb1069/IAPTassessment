@@ -15,17 +15,6 @@ crypt = CRYPT(key=auth.settings.hmac_key)
 #     db.auth_group.insert(id=i, role='user%s' % i, description='Group uniquely assigned to user %s' % i)
 #     db.auth_membership.insert(id=i, user_id=i, group_id=i)
 
-# Update database
-if len(db(db.auth_user.id==7).select('id'))==0:
-    print 'deleting'
-    db(db.auth_user.id>=0).delete()
-    db(db.comicbox.id>=0).delete()
-    db(db.comicbook.id>=0).delete()
-    db(db.writer.id>=0).delete()
-    db(db.artist.id>=0).delete()
-    db(db.publisher.id>=0).delete()
-    db(db.comicWriter.id>=0).delete()
-    db(db.comicArtist.id>=0).delete()
 
 i = 1
 if db(db.auth_user.id >= 0).count() == 0:
