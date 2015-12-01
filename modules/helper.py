@@ -43,16 +43,13 @@ def submit_comiccreate_form(form, db, request, auth):
 
 def submit_comicedit_form(form, db, request, auth):
     fields = form.vars
-    print "artists"
-    print fields.artists
     if not isinstance(fields.artists, list):
         fields.artists = [fields.artists]
     if not isinstance(fields.writers, list):
         fields.writers = [fields.writers]
     fields.artists = list(set(fields.artists))
     fields.writers = list(set(fields.writers))
-    print "artists"
-    print fields.artists
+
     # Updating comicbox
     boxid = db((db.comicbox.name == fields.box_name) & (db.comicbox.user_id==auth.user_id)).select(db.comicbox.id).column()[0]
 
