@@ -176,7 +176,8 @@ def comicedit():
         Field('title', type='string', default=comicbook.title, required=True, requires=IS_NOT_EMPTY()),
         Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name,
               requires=IS_IN_SET(user_boxes, zero=None)),
-        Field('cover', type='upload', uploadfolder='upload'),
+        #Todo fix permissions on uploads folder?
+        Field('cover', type='upload', uploadfolder=URL('uploads'), requires=IS_EMPTY_OR(IS_IMAGE(extensions=('jpeg', 'png', 'jpg'), minsize=(300,400)))),
         Field('artists', type='list:string', default=comics_artists, requires=IS_NOT_EMPTY()),
         Field('writers', type='list:string', default=comics_writers, requires=IS_NOT_EMPTY()),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
