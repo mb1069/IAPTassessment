@@ -86,7 +86,7 @@ def search():
         Field('writer', type='string'),
         Field('artist', type='string'),
         Field('publisher', type='string'),
-        Field('keyword', type='string'))
+        Field('keyword', type='string'), submit_button='Search')
     finalsearchresults = []
     if form.process(keepvalues=True).accepted:
         fields = form.vars

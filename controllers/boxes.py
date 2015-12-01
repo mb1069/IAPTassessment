@@ -34,7 +34,8 @@ def boxview():
     record = db.comicbox(request.vars.boxid)
 
     # Do not allow default box to be deleted
-    form = SQLFORM(db.comicbox, record, deletable=box.name!="Unfiled", submit_button="Update", delete_label="Check to delete")
+    form = SQLFORM(db.comicbox, record, deletable=box.name!="Unfiled", submit_button="Update box",
+                   delete_label="Check to delete")
     # Pre-load data
     form.vars.name = db(db.comicbox.id == request.vars.boxid).select(db.comicbox.name).column()[0]
 
@@ -70,7 +71,7 @@ def boxview():
 
 # View to create new box and redirect to box on success
 def boxcreate():
-    form = SQLFORM(db.comicbox)
+    form = SQLFORM(db.comicbox, submit_button="Save box")
     form.vars.user_id = auth.user_id
     if form.process().accepted:
         session.flash = 'Created box!'

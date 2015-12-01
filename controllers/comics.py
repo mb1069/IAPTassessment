@@ -132,7 +132,8 @@ def comiccreate():
         Field('writers', type='list:string', default=defaultWriters, requires=IS_NOT_EMPTY()),
         Field('issue_number', type='string', default=defaultIssue_number),
         Field('description', type='text', default=defaultDescription),
-        table_name='comicbook', upload=URL('uploads'))
+        table_name='comicbook', upload=URL('uploads'),
+        submit_button="Save comic")
 
     if form.process().accepted:
         submit_comiccreate_form(form, db, request, auth)
@@ -200,7 +201,8 @@ def comicedit():
         Field('update_all', type='boolean', default=False,
               label='Update the publisher of all of your comics with the same publisher.'),
         Field('issue_number', type='string', default=comicbook.issue_number),
-        Field('description', type='text', default=comicbook.description), table_name='comicbook')
+        Field('description', type='text', default=comicbook.description), table_name='comicbook',
+        submit_button="Save changes")
 
     if form.process().accepted:
         submit_comicedit_form(form, db, request, auth)
