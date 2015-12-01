@@ -117,6 +117,7 @@ def comiccreate():
         Field('box_name', type='string', default=defaultBoxName, required=True,
               requires=IS_IN_SET(user_boxes, zero=None)),
         Field('cover', type='upload', label='Cover max 400h * 300w px', uploadfolder=os.path.join(request.folder,'uploads'), requires=IS_EMPTY_OR(IS_IMAGE(maxsize=(300,400)))),
+        Field('remove_existing_cover', type='boolean', label='Remove existing cover (automatic if cover uploaded above)', default=False),
         Field('artists', type='list:string', default=defaultArtists, requires=IS_NOT_EMPTY()),
         Field('writers', type='list:string', default=defaultWriters, requires=IS_NOT_EMPTY()),
         Field('issue_number', type='string', default=defaultIssue_number),
