@@ -1,4 +1,4 @@
-timestamp: 2015-12-01T10:56:36.957277
+timestamp: 2015-12-01T11:45:27.879000
 CREATE TABLE auth_user(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     first_name CHAR(128),
@@ -11,7 +11,7 @@ CREATE TABLE auth_user(
     registration_id CHAR(512)
 );
 success!
-timestamp: 2015-12-01T10:56:36.998288
+timestamp: 2015-12-01T11:45:28.044909
 CREATE TABLE comicbox(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
@@ -20,14 +20,14 @@ CREATE TABLE comicbox(
     created_on TIMESTAMP
 );
 success!
-timestamp: 2015-12-01T10:56:37.033068
+timestamp: 2015-12-01T11:45:28.096148
 CREATE TABLE publisher(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
     name CHAR(512)
 );
 success!
-timestamp: 2015-12-01T10:56:37.119798
+timestamp: 2015-12-01T11:45:28.141144
 CREATE TABLE comicbook(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     box_id INTEGER REFERENCES comicbox (id) ON DELETE SET NULL  ,
@@ -38,55 +38,31 @@ CREATE TABLE comicbook(
     description TEXT
 );
 success!
-timestamp: 2015-12-01T10:56:37.200296
+timestamp: 2015-12-01T11:45:28.248462
 CREATE TABLE artist(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
     name CHAR(512)
 );
 success!
-timestamp: 2015-12-01T10:56:37.280685
+timestamp: 2015-12-01T11:45:28.344269
 CREATE TABLE comicArtist(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     comicbook_id INTEGER REFERENCES comicbook (id) ON DELETE CASCADE  ,
     artist_id INTEGER REFERENCES artist (id) ON DELETE CASCADE  
 );
 success!
-timestamp: 2015-12-01T10:56:37.350000
+timestamp: 2015-12-01T11:45:28.477290
 CREATE TABLE writer(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
     name CHAR(512)
 );
 success!
-timestamp: 2015-12-01T10:56:37.426646
+timestamp: 2015-12-01T11:45:28.549592
 CREATE TABLE comicWriter(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     comicbook_id INTEGER REFERENCES comicbook (id) ON DELETE CASCADE  ,
     writer_id INTEGER REFERENCES writer (id) ON DELETE CASCADE  
-);
-success!
-timestamp: 2015-12-01T11:35:42.229599
-CREATE TABLE auth_event(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    time_stamp TIMESTAMP,
-    client_ip CHAR(512),
-    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
-    origin CHAR(512),
-    description TEXT
-);
-success!
-timestamp: 2015-12-01T11:35:52.166410
-CREATE TABLE auth_group(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    role CHAR(512),
-    description TEXT
-);
-success!
-timestamp: 2015-12-01T11:35:52.197982
-CREATE TABLE auth_membership(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
-    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE  
 );
 success!

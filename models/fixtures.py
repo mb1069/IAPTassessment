@@ -17,7 +17,7 @@ crypt = CRYPT(key=auth.settings.hmac_key)
 
 i = 1
 if db(db.auth_user.id >= 0).count() == 0:
-    for i in range(0, 10):
+    for i in range(0, 5):
         db.auth_user.insert(id=i, username='username%s' % i, first_name='username%s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
                         password=crypt('password%s' % i)[0])
 
@@ -39,7 +39,7 @@ templateComics = [
 
 if db(db.comicbox.id > 0).count() <6:
 
-    for i in range(0, 10):
+    for i in range(0, 5):
         db.comicbox.insert(user_id=i, name='Box A', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box B', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box C', private=False if random.randint(0,1)==1 else True)
@@ -47,7 +47,7 @@ if db(db.comicbox.id > 0).count() <6:
         db.comicbox.insert(user_id=i, name='Box E', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box F', private=False if random.randint(0,1)==1 else True)
 
-    for c in range(0, 250):
+    for c in range(0, 100):
         i = random.randint(1, 24)
         for x in range(1, random.randint(0, len(templateComics)-1)):
             comic = templateComics[x]
@@ -74,3 +74,36 @@ if db(db.comicbox.id > 0).count() <6:
                 else:
                     writer_id = db((db.writer.name==writer) & (db.writer.user_id==user_id)).select(db.writer.id).column()[0]
                 db.comicWriter.insert(comicbook_id=comicId, writer_id=writer_id)
+
+    # db.comicbook.insert(box_id=5, title='Superman1', publisher=1, issue_number=949, cover=open(cover_path), description='In the past, yet also in the future, in a land far far away in space...')
+    # db.comicbook.insert(box_id=6, title='Superman2', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=6, title='Superman2', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=7, title='Superman3', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=7, title='Superman3', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=7, title='Superman3', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=8, title='Superman4', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=8, title='Superman4', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=8, title='Superman4', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=8, title='Superman4', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman5', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman5', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman5', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman5', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman5', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman6', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman6', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman6', publisher=1, cover=open(cover_path))
+    # db.comicbook.insert(box_id=9, title='Superman6', publisher=2, cover=open(cover_path))
+
+
+    # db.artist.insert(user_id=1, name='Artsy')
+    # db.artist.insert(user_id=1, name='Art')
+    # db.comicArtist.insert(comicbook_id=1, artist_id=1)
+    # db.comicArtist.insert(comicbook_id=1, artist_id=2)
+    # db.writer.insert(user_id=1, name='Writsy')
+    # db.writer.insert(user_id=1, name='Writ')
+    # db.comicWriter.insert(comicbook_id=1, writer_id=1)
+    # db.comicWriter.insert(comicbook_id=1, writer_id=2)
