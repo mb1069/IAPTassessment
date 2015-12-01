@@ -45,12 +45,17 @@
             <td align="center">{{=row.writerNames}}</td>
             <td align="center">{{=row.artistNames}}</td>
             <td align="center"><a href="{{=URL('comics', 'comicview', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='view.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
-            {{if not row.isOwnedByCurrentUser:}}
-                <td align="center"><a href="{{=URL('comics', 'comicedit', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
-                <td class="last"></td>
+            {{if auth.is_logged_in():}}
+                {{if row.isOwnedByCurrentUser:}}
+                    <td align="center"><a href="{{=URL('comics', 'comicedit', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
+                    <td class="last"></td>
+                {{else:}}
+                    <td></td>
+                    <td class="last" align="center"><a href="{{=URL('comics', 'comiccreate', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='copy.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
+                {{pass}}
             {{else:}}
                 <td></td>
-                <td class="last" align="center"><a href="{{=URL('comics', 'comiccreate', vars={'comicbookid': row.comicbook.id})}}"><img src="{{=URL('static', 'images', args='copy.png')}}" class="comic-editing-icon" height="20px" width="20px"/></a></td>
+                <td class="last"></td>
             {{pass}}
 
         </tr>
