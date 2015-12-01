@@ -15,7 +15,7 @@ def boxview():
         session.flash = 'Box is private!'
         redirect(URL('default', 'index'))
 
-    items_per_page = 5
+    comics_per_page = 10
 
     if request.vars.page is not None:
         page = int(request.vars.page)
@@ -27,10 +27,10 @@ def boxview():
         numitems = db(db.comicbook.box_id == request.vars.boxid).count()
 
     box_comics = db((db.comicbox.id == request.vars.boxid) & (db.comicbook.box_id == request.vars.boxid)).select(
-        db.comicbook.id, db.comicbox.id,
+        db.comicbook.id, db.comicbox.id, db.comicbox.user_id,
         db.comicbox.name, db.comicbook.title,
         db.comicbook.cover, db.comicbook.issue_number,
-        db.comicbook.publisher, db.comicbook.description, limitby=(page * items_per_page, (page + 1) * items_per_page))
+        db.comicbook.publisher, db.comicbook.description, limitby=(page * comics_per_page, (page + 1) * comics_per_page))
     record = db.comicbox(request.vars.boxid)
     # Do not allow default box to be deleted
     form = SQLFORM(db.comicbox, record, deletable=box.name!="Unfiled", submit_button="Update", delete_label="Check to delete")
@@ -61,7 +61,7 @@ def boxview():
             'form': form,
             "page": page,
             "numitems": numitems,
-            "display_next": numitems>(page+1)*items_per_page}
+            "display_next": numitems>(page+1)*comics_per_page}
 
 
 def boxcreate():

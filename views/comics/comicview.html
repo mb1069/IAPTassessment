@@ -8,7 +8,7 @@
 <img height="400" width="300" src="{{=URL(r=request, c='default', f='fast_download',  args=cover, host=True)}}"/>
 </div>
 
-<div style="padding-left:1em; float:left; ">
+<div style="padding-left:1em; float:left; width:60em">
 {{if (issue_number is not None) & len(issue_number)>0:}}
     <p>Issue number: {{=issue_number}}</p>
 {{pass}}
@@ -43,7 +43,11 @@
     {{pass}}
 {{pass}}
 {{if owns_comic:}}
-<a href="{{=URL('comics', 'comicedit', vars={'comicbookid': comicbookid})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="40px" width="40px"/></a>
-<img class="deleteIcon" onclick="deleteComic('{{=comicbookid}}', '{{=title}}', '{{=URL('comics', 'comicdelete')}}', '{{=URL('comics', 'mycomics')}}')" src="{{=URL('static', 'images', args='delete.png')}}" height="40px" width="40px"/>
+    <a href="{{=URL('comics', 'comicedit', vars={'comicbookid': comicbookid})}}"><img src="{{=URL('static', 'images', args='edit.png')}}" class="comic-editing-icon" height="40px" width="40px"/></a>
+    <img class="deleteIcon" onclick="deleteComic('{{=comicbookid}}', '{{=title}}', '{{=URL('comics', 'comicdelete')}}', '{{=URL('comics', 'mycomics')}}')" src="{{=URL('static', 'images', args='delete.png')}}" height="40px" width="40px"/>
+
 {{pass}}
+    <a href="{{=URL('comics', 'comiccreate', vars={'comicbookid': comicbookid})}}"><img src="{{=URL('static', 'images', args='copy.png')}}" class="comic-editing-icon" height="40px" width="40px"/></a>
+    <a href="{{=URL('boxes', 'boxview', vars={'boxid': comicbookid})}}"><img src="{{=URL('static', 'images', args='box.png')}}" class="comic-editing-icon" height="40px" width="40px"/></a>
+
 </div>

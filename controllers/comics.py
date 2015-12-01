@@ -20,7 +20,7 @@ def mycomics():
 
     user_comics = db((auth.user_id == db.comicbox.user_id) &
                      (db.comicbox.id == db.comicbook.box_id)).select(db.comicbook.id, db.comicbox.id,
-                                                                     db.comicbox.name, db.comicbook.title,
+                                                                     db.comicbox.name, db.comicbook.title, db.comicbox.user_id,
                                                                      db.comicbook.cover, db.comicbook.issue_number,
                                                                      db.comicbook.publisher, db.comicbook.description,
                                                                      limitby=(page * items_per_page,
@@ -116,9 +116,9 @@ def comiccreate():
         Field('title', type='string', default=defaultTitle, required=True, requires=IS_NOT_EMPTY()),
         Field('box_name', type='string', default=defaultBoxName, required=True,
               requires=IS_IN_SET(user_boxes, zero=None)),
-        Field('cover', type='upload', uploadfolder=os.path.join(request.folder,'uploads')),
-        Field('artists', type='list:string', requires=IS_NOT_EMPTY()),
-        Field('writers', type='list:string', requires=IS_NOT_EMPTY()),        Field('publisher', type='string', default=defaultPublisher),
+        Field('cover', type='upload', label='Cover max 400h * 300w px', uploadfolder=os.path.join(request.folder,'uploads'), requires=IS_EMPTY_OR(IS_IMAGE(maxsize=(300,400)))),
+        Field('artists', type='list:string', default=defaultArtists, requires=IS_NOT_EMPTY()),
+        Field('writers', type='list:string', default=defaultWriters, requires=IS_NOT_EMPTY()),
         Field('issue_number', type='string', default=defaultIssue_number),
         Field('description', type='text', default=defaultDescription),
         table_name='comicbook', upload=URL('uploads'))
