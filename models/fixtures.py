@@ -17,7 +17,7 @@ crypt = CRYPT(key=auth.settings.hmac_key)
 
 i = 1
 if db(db.auth_user.id >= 0).count() == 0:
-    for i in range(0, 5):
+    for i in range(0, 10):
         db.auth_user.insert(id=i, username='username%s' % i, first_name='username%s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
                         password=crypt('password%s' % i)[0])
 
@@ -39,7 +39,7 @@ templateComics = [
 
 if db(db.comicbox.id > 0).count() <6:
 
-    for i in range(0, 5):
+    for i in range(0, 10):
         db.comicbox.insert(user_id=i, name='Box A', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box B', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box C', private=False if random.randint(0,1)==1 else True)
@@ -47,7 +47,7 @@ if db(db.comicbox.id > 0).count() <6:
         db.comicbox.insert(user_id=i, name='Box E', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box F', private=False if random.randint(0,1)==1 else True)
 
-    for c in range(0, 50):
+    for c in range(0, 250):
         i = random.randint(1, 24)
         for x in range(1, random.randint(0, len(templateComics)-1)):
             comic = templateComics[x]

@@ -30,11 +30,11 @@ def boxview():
         db.comicbook.cover, db.comicbook.issue_number,
         db.comicbook.publisher, db.comicbook.description, limitby=(page * items_per_page, (page + 1) * items_per_page))
     record = db.comicbox(request.vars.boxid)
-    form = SQLFORM(db.comicbox, record, deletable=True, submit_button="Update", delete_label="Check to delete")
-    form.vars.name = db(db.comicbox.id == request.vars.boxid).select(db.comicbox.id).column()[0]
+    # Do not allow default box to be deleted
+    form = SQLFORM(db.comicbox, record, deletable=box.name!="Unfiled", submit_button="Update", delete_label="Check to delete")
+    form.vars.name = db(db.comicbox.id == request.vars.boxid).select(db.comicbox.name).column()[0]
 
     if form.process().accepted:
-
         if form.deleted:
             helper.move_comics_to_unfiled(db, auth.user_id)
             session.flash = 'Box deleted!'

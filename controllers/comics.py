@@ -4,7 +4,7 @@ import helper
 import os
 
 def mycomics():
-    items_per_page = 10
+    items_per_page = 17
 
     if len(request.args):
         page = int(request.args[0])

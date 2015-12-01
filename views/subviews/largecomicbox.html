@@ -11,7 +11,11 @@
 
     <div class="comics-area">
         {{for comic in box[1]:}}
-            <img class="comicbox-comic-icon" height="100" width="75" src="{{=URL(r=request, c='default', f='fast_download',  args=comic.cover, host=True)}}"/>
+            {{if len(comic.cover)>0:}}
+               <img class="comicbox-comic-icon" height="100" width="75" src="{{=URL(r=request, c='default', f='fast_download',  args=comic.cover, host=True)}}"/>
+        {{else:}}
+                <img class="comicbox-comic-icon" height="100" width="75" src="{{=URL('static', 'images', args='comic_cover_placeholder.png')}}"/>
+            {{pass}}
         {{pass}}
     </div>
 </div>
