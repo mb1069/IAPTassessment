@@ -19,7 +19,7 @@ def boxview():
         page = int(request.vars.page)
     else:
         page = 0
-    if len(request.args) == 2:
+    if request.vars.numitems is not None:
         numitems = int(request.vars.numitems)
     else:
         numitems = db(db.comicbook.box_id == request.vars.boxid).count()

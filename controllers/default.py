@@ -106,26 +106,26 @@ def search():
 
         if helper.notempty(fields.title):
             field_results.append(
-                db(db.comicbook.title.like('%' + fields.title + '%')).select(db.comicbook.id).column(
-                    db.comicbook.id, groupby=db.comicbook.id))
+                db(db.comicbook.title.like('%' + fields.title + '%')).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                    db.comicbook.id))
 
         if helper.notempty(fields.publisher):
             field_results.append(
                 db((db.publisher.name.like('%' + fields.publisher + '%')) & (
-                    db.comicbook.publisher == db.publisher.id)).select(db.comicbook.id).column(
-                    db.comicbook.id, groupby=db.comicbook.id))
+                    db.comicbook.publisher == db.publisher.id)).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                    db.comicbook.id))
 
         if helper.notempty(fields.writer):
             field_results.append(db(db.writer.name.like('%' + fields.writer + '%') &
                                     (db.comicWriter.writer_id == db.writer.id) &
-                                    (db.comicbook.id == db.comicWriter.comicbook_id)).select(db.comicbook.id).column(
-                db.comicbook.id, groupby=db.comicbook.id))
+                                    (db.comicbook.id == db.comicWriter.comicbook_id)).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                db.comicbook.id))
 
         if helper.notempty(fields.artist):
             field_results.append(db(db.artist.name.like('%' + fields.artist + '%') &
                                     (db.comicArtist.artist_id == db.artist.id) &
-                                    (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id).column(
-                db.comicbook.id, groupby=db.comicbook.id))
+                                    (db.comicbook.id == db.comicArtist.comicbook_id)).select(db.comicbook.id, groupby=db.comicbook.id).column(
+                db.comicbook.id))
 
         if len(field_results) > 0:
             intersected_results = helper.intersect(field_results)
@@ -165,7 +165,7 @@ def search():
 
     elif form.errors:
         return form.errors
-    return {'search_results': finalsearchresults, 'form2': form}
+    return {'search_results': finalsearchresults, 'form': form}
 
 def error():
     return {'errormsg': request.vars.errormsg}
