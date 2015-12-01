@@ -3,6 +3,7 @@ __author__ = 'miguel'
 import helper
 import os
 
+
 def mycomics():
     items_per_page = 17
 

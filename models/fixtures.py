@@ -15,9 +15,21 @@ crypt = CRYPT(key=auth.settings.hmac_key)
 #     db.auth_group.insert(id=i, role='user%s' % i, description='Group uniquely assigned to user %s' % i)
 #     db.auth_membership.insert(id=i, user_id=i, group_id=i)
 
+# Update database
+if len(db(db.auth_user.id==7).select('id'))==0:
+    print 'deleting'
+    db(db.auth_user.id>=0).delete()
+    db(db.comicbox.id>=0).delete()
+    db(db.comicbook.id>=0).delete()
+    db(db.writer.id>=0).delete()
+    db(db.artist.id>=0).delete()
+    db(db.publisher.id>=0).delete()
+    db(db.comicWriter.id>=0).delete()
+    db(db.comicArtist.id>=0).delete()
+
 i = 1
 if db(db.auth_user.id >= 0).count() == 0:
-    for i in range(0, 5):
+    for i in range(1, 8):
         db.auth_user.insert(id=i, username='username%s' % i, first_name='username%s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
                         password=crypt('password%s' % i)[0])
 
@@ -37,9 +49,9 @@ templateComics = [
     {"title": "Arkham Asylum: A Serious House on Serious Earth", "publisher": "DC Comics", "issue_number": "#42", "cover_path": "arkham.jpg", "writers": ["Grant Morrison"], "artists": ["Dave McKean"], "description": "Arkham Asylum: A Serious House on Serious Earth (often shortened to Batman: Arkham Asylum) is a Batman graphic novel written by Grant Morrison and illustrated by Dave McKean. It was originally published in the United States in both hardcover and softcover editions by DC Comics in 1989. The subtitle is taken from Philip Larkin's poem \"Church Going.\""},
     ]
 
-if db(db.comicbox.id > 0).count() <6:
+if db(db.comicbox.id > 0).count() < db(db.auth_user.id > 0).count()+1:
 
-    for i in range(0, 5):
+    for i in range(1, 8):
         db.comicbox.insert(user_id=i, name='Box A', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box B', private=False if random.randint(0,1)==1 else True)
         db.comicbox.insert(user_id=i, name='Box C', private=False if random.randint(0,1)==1 else True)
