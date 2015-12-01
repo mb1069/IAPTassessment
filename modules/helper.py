@@ -15,7 +15,7 @@ def submit_comiccreate_form(form, db, request, auth):
     # Insert comic
     boxid = db((db.comicbox.name == fields.box_name) & (db.comicbox.user_id==auth.user_id)).select(db.comicbox.id).column()[0]
 
-    if (fields.cover is "") & (request.vars.comicbookid is not None) & (not fields.remove_existing_cover):
+    if ((fields.cover is "") | (fields.cover is None)) & (request.vars.comicbookid is not None) & (not fields.remove_existing_cover):
         rows = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.cover)
         if len(rows)>0:
             fields.cover = rows[0].cover
@@ -84,7 +84,7 @@ def submit_comicedit_form(form, db, request, auth):
             # If no publisher with name/user_id, create a new one
             publisher_id = db.publisher.insert(user_id=auth.user, name=request.vars.publisher)
 
-    if fields.cover is "":
+    if (fields.cover is "") | (fields.cover is None):
         previous_cover = db(db.comicbook.id == request.vars.comicbookid).select(db.comicbook.cover)[0].cover
         fields.cover = previous_cover
 

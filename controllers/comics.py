@@ -178,6 +178,7 @@ def comicedit():
         Field('box_name', type='string', required=True, default=comic_details[0].comicbox.name,
               requires=IS_IN_SET(user_boxes, zero=None)),
         Field('cover', type='upload', label='Cover max 400h * 300w px', uploadfolder=os.path.join(request.folder,'uploads'), requires=IS_EMPTY_OR(IS_IMAGE(maxsize=(300,400)))),
+
         Field('artists', type='list:string', default=comics_artists, requires=IS_NOT_EMPTY()),
         Field('writers', type='list:string', default=comics_writers, requires=IS_NOT_EMPTY()),
         Field('publisher', type='string', default=comic_details[0].publisher.name),
