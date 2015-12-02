@@ -130,12 +130,14 @@ db.comicbook.cover.default = os.path.join(request.folder, 'static', 'comic_cover
 db.define_table('writer',
                 Field('user_id', 'reference auth_user', required=True, ondelete='CASCADE'),
                 Field('name', type='string', required=True, requires=IS_NOT_EMPTY()))
+# Insertion callback to create composite key
 db.writer.name.requires = IS_NOT_IN_DB(db(db.writer.user_id == request.vars.user), 'writer.name')
 
 # comic_writer table
 db.define_table('comicWriter',
                 Field('comicbook_id', 'reference comicbook', required=True, ondelete='CASCADE'),
                 Field('writer_id', 'reference writer', required=True, ondelete='CASCADE'))
+# Insertion callback to create composite key
 db.comicWriter.writer_id.requires = IS_NOT_IN_DB(db(db.comicWriter.comicbook_id == request.vars.comicbook_id), 'comicWriter.writer_id')
 
 
@@ -143,6 +145,7 @@ db.comicWriter.writer_id.requires = IS_NOT_IN_DB(db(db.comicWriter.comicbook_id 
 db.define_table('artist',
                 Field('user_id', 'reference auth_user', required=True, ondelete='CASCADE'),
                 Field('name', type='string', required=True, requires=IS_NOT_EMPTY()))
+# Insertion callback to create composite key
 db.artist.name.requires = IS_NOT_IN_DB(db(db.artist.user_id == request.vars.user), 'artist.name')
 
 
@@ -150,4 +153,5 @@ db.artist.name.requires = IS_NOT_IN_DB(db(db.artist.user_id == request.vars.user
 db.define_table('comicArtist',
                 Field('comicbook_id', 'reference comicbook', required=True, ondelete='CASCADE'),
                 Field('artist_id', 'reference artist', required=True, ondelete='CASCADE'))
+# Insertion callback to create composite key
 db.comicArtist.artist_id.requires = IS_NOT_IN_DB(db(db.comicArtist.comicbook_id == request.vars.comicbook_id), 'comicArtist.artist_id')
