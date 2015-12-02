@@ -1,37 +1,38 @@
 <!--Exam candidate number: Y0076159-->
 {{extend 'comic_layout.html'}}
 <div class="pagetitle">
-    {{=boxdetails.name}}
+    {{=boxdetails.comicbox.name}}
 </div>
-<div style="float:left">Created on: {{=boxdetails.created_on}} </div>
+<div style="float:left">Owned by user: {{=boxdetails.auth_user.screen_name}},  &nbsp  Created on: {{=boxdetails.comicbox.created_on}} </div>
 
-<div style="float:right">Privacy mode: {{if boxdetails.private:}} private {{else:}} public {{pass}} </div>
+
+<div style="float:right">Privacy mode: {{if boxdetails.comicbox.private:}} private {{else:}} public {{pass}} </div>
 
 <div style="clear:both; width: 1680px">
     {{for row in box_comics:}}
             {{include 'subviews/comicbook.html'}}
     {{pass}}
-    {{if auth.user_id==boxdetails.user_id:}}
+    {{if auth.user_id==boxdetails.comicbox.user_id:}}
         {{include 'subviews/add_comic.html'}}
     {{pass}}
 </div>
 <div style="width:100%; clear:both">
         <ul class="pager">
             {{if page!=0:}}
-                <li class="previous"><a href="{{=URL(vars={"boxid": boxdetails.id, "page":page-1})}}">Previous</a></li>
+                <li class="previous"><a href="{{=URL(vars={"boxid": boxdetails.comicbox.id, "page":page-1})}}">Previous</a></li>
             {{pass}}
             {{if display_next:}}
-                <li class="next"><a href="{{=URL(vars={"boxid": boxdetails.id, "page":page+1})}}">Next</a></li>
+                <li class="next"><a href="{{=URL(vars={"boxid": boxdetails.comicbox.id, "page":page+1})}}">Next</a></li>
             {{pass}}
         </ul>
 </div>
-{{if auth.user_id==boxdetails.user_id:}}
+{{if auth.user_id==boxdetails.comicbox.user_id:}}
     <div style="clear:both; width: 32em; margin: 0 auto;">
         {{=form}}
     </div>
 {{pass}}
 <script>
     $("#addComic").click(function(){
-        location.href =" {{=URL('comics', 'comiccreate', vars={"boxid": boxdetails.id})}}"
+        location.href =" {{=URL('comics', 'comiccreate', vars={"boxid": boxdetails.comicbox.id})}}"
     });
 </script>

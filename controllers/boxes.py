@@ -59,8 +59,9 @@ def boxview():
     writer_comics = db(
         (db.writer.id == db.comicWriter.writer_id) & (db.comicWriter.comicbook_id.belongs(user_comics_id))).select(
         db.comicWriter.comicbook_id, db.writer.name)
+    boxdetails = db((db.comicbox.user_id==db.auth_user.id) & (db.comicbox.id == request.vars.boxid)).select()[0]
 
-    return {'boxdetails': db(db.comicbox.id == request.vars.boxid).select()[0],
+    return {'boxdetails': boxdetails,
             'box_comics': box_comics,
             'artist_comics': artist_comics,
             'writer_comics': writer_comics,

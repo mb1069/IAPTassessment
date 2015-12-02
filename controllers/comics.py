@@ -59,9 +59,10 @@ def comicview():
                   db.artist.on(db.comicArtist.artist_id == db.artist.id),
                   db.publisher.on(db.comicbook.publisher == db.publisher.id)]
 
-    comic_details = db((db.comicbook.id == request.vars.comicbookid) & (db.comicbook.box_id == db.comicbox.id)).select(
+    comic_details = db((db.comicbox.user_id == db.auth_user.id) & (db.comicbook.id == request.vars.comicbookid) & (db.comicbook.box_id == db.comicbox.id)).select(
         db.comicbook.title,
         db.comicbook.issue_number,
+        db.auth_user.screen_name,
         db.comicbox.id,
         db.comicbox.user_id,
         db.comicbox.name,
@@ -79,6 +80,7 @@ def comicview():
     return {'comicbookid': request.vars.comicbookid,
             'box_id': data.comicbox.id,
             'box_name': data.comicbox.name,
+            'box_owner': data.auth_user.screen_name,
             'title': data.comicbook.title,
             'cover': data.comicbook.cover,
             'issue_number': data.comicbook.issue_number,

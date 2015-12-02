@@ -9,9 +9,14 @@
 </div>
 
 <div style="padding-left:1em; float:left; max-width:33em">
+{{if box_owner is not None:}}
+    <p>Owned by user: {{=box_owner}}</p>
+{{pass}}
+
 {{if (issue_number is not None) & len(issue_number)>0:}}
     <p>Issue number: {{=issue_number}}</p>
 {{pass}}
+
 {{if len(writers)>0:}}
     <p>
         Writers:
@@ -34,7 +39,7 @@
 {{pass}}
 {{if publisher is not None:}}
     {{if len(publisher)>0:}}
-        <p>Published by {{=publisher}}</p>
+        <p>Published by: {{=publisher}}</p>
     {{pass}}
 {{pass}}
 {{if description is not None:}}
