@@ -25,7 +25,7 @@
     <div id="searchresults">
     <table class="searchresultstable">
         <tr>
-            <th style="text-align: center;">User id</th>
+            <th style="text-align: center;">User</th>
             <th style="text-align: center;">Box name</th>
             <th style="text-align: center;">Title</th>
             <th style="text-align: center;">Publisher</th>
@@ -38,7 +38,7 @@
         </tr>
     {{for row in search_results:}}
         <tr>
-            <td class="first" align="center">{{=row.comicbox.user_id}}</td>
+            <td class="first" align="center">{{=row.auth_user.screen_name}}</td>
             <td align="center">{{=row.comicbox.name}}</td>
             <td align="center">{{=row.comicbook.title}}</td>
             <td align="center">{{=row.publisher.name}}</td>

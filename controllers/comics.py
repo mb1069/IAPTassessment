@@ -1,6 +1,4 @@
 # Exam Candidate Number Y0076159
-
-
 import helper
 import os
 
@@ -130,8 +128,9 @@ def comiccreate():
         Field('remove_existing_cover', type='boolean', label='Remove existing cover (automatic if cover uploaded above)', default=False),
         Field('artists', type='list:string', default=defaultArtists, requires=IS_NOT_EMPTY()),
         Field('writers', type='list:string', default=defaultWriters, requires=IS_NOT_EMPTY()),
+        Field('publisher', type='string', default=defaultPublisher, requires=IS_NOT_EMPTY()),
         Field('issue_number', type='string', default=defaultIssue_number),
-        Field('description', type='text', default=defaultDescription),
+        Field('description', type='text', default=defaultDescription, requires=IS_EXPR('len(value.split())<=300', error_message="Description is too long (>300 words).")),
         table_name='comicbook', upload=URL('uploads'),
         submit_button="Save comic")
 
@@ -201,8 +200,8 @@ def comicedit():
         Field('update_all', type='boolean', default=False,
               label='Update the publisher of all of your comics with the same publisher.'),
         Field('issue_number', type='string', default=comicbook.issue_number),
-        Field('description', type='text', default=comicbook.description), table_name='comicbook',
-        submit_button="Save changes")
+        Field('description', type='text', default=comicbook.description, requires=IS_EXPR('len(value.split())<=300', error_message="Description is too long (>300 words).")),
+        table_name='comicbook', submit_button="Save changes")
 
     if form.process().accepted:
         submit_comicedit_form(form, db, request, auth)

@@ -22,10 +22,11 @@ crypt = CRYPT(key=auth.settings.hmac_key)
 #     db.auth_membership.insert(id=i, user_id=i, group_id=i)
 
 # Update database
+names = ["Alex", "Tom", "Belma", "Rick", "Archer", "Homer"]
 i = 1
 if db(db.auth_user.id >= 0).count() == 0:
     for i in range(0, 8):
-        db.auth_user.insert(id=i, username='username%s' % i, first_name='username%s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
+        db.auth_user.insert(id=i, username='username%s' % i, screen_name=names[random.randint(0,5)], first_name='username%s' % i, last_name='User %s' % i, email='test_email_%s@sososofake.com' % i,
                         password=crypt('password%s' % i)[0])
 
 templateComics = [

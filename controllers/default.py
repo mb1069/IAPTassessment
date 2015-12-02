@@ -147,9 +147,11 @@ def search():
                           db.comicArtist.on(db.comicArtist.comicbook_id == db.comicbook.id),
                           db.artist.on(db.comicArtist.artist_id == db.artist.id)]
 
-            search_results = db(
-                db.comicbook.id.belongs(intersected_results) & (db.comicbook.box_id == db.comicbox.id) & (
-                    db.comicbook.publisher == db.publisher.id)).select(db.comicbook.title,
+            search_results = db(db.comicbook.id.belongs(intersected_results)
+                    & (db.comicbox.user_id == db.auth_user.id)
+                    & (db.comicbook.box_id == db.comicbox.id)
+                    & (db.comicbook.publisher == db.publisher.id)).select(db.comicbook.title,
+                                                                       db.auth_user.screen_name,
                                                                        db.comicbook.id,
                                                                        db.comicbook.issue_number,
                                                                        db.comicbox.name, db.comicbox.user_id,

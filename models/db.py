@@ -44,6 +44,8 @@ from gluon.tools import Auth, Service, PluginManager
 db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'], lazy_tables=True)
 
 auth = Auth(db)
+
+auth.settings.extra_fields['auth_user']=[Field('screen_name', type='string')]
 # create all tables needed by auth if not custom tables
 auth.define_tables(username=True, signature=False)
 
