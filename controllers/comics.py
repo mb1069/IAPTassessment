@@ -210,11 +210,13 @@ def comicedit():
 
     return {'form': form}
 
+
 # No view associated with this, only used as request to delete comic
 def comicdelete():
     db(db.comicbook.id == request.vars.comicbookid).delete()
     session.flash = "Deleted comic!"
     redirect(URL('comics', 'mycomics'))
+
 
 # Helper method to create new comic, originally in helper.py but requires Apache server restart to re-load correctly
 # hence refactored here
